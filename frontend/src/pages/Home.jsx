@@ -141,8 +141,11 @@ const Home = () => {
         })}
       </section>
       <section className="flex items-start justify-between gap-2">
-        {categories.map((i) => (
-          <div className="flex-shrink-0 w-35 flex flex-col items-center">
+        {categories.map((i, idx) => (
+          <div
+            key={idx}
+            className="flex-shrink-0 w-35 flex flex-col items-center"
+          >
             <div className="w-full aspect-square bg-zinc-500 overflow-hidden rounded-lg">
               <img
                 src={i.image}

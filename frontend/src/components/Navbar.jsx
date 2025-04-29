@@ -24,16 +24,16 @@ const Navbar = () => {
           <i className="ri-map-pin-2-fill ri-lg"></i>
         </div>
         <div className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease">
-          <i class="ri-shopping-cart-2-fill ri-lg"></i>
+          <i className="ri-shopping-cart-2-fill ri-lg"></i>
         </div>
         {isLoggedIn ? (
           <div className="shadow flex items-center rounded-full">
             <div className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease">
-              <i class="ri-account-circle-fill ri-lg"></i>
+              <i className="ri-account-circle-fill ri-lg"></i>
             </div>
             <p>Account</p>
             <div className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer transition duration-200 ease">
-              <i class="ri-arrow-down-s-line"></i>
+              <i className="ri-arrow-down-s-line"></i>
             </div>
           </div>
         ) : (

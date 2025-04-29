@@ -1,12 +1,19 @@
 import Login from "./pages/Login.jsx";
 import Home from "./pages/Home.jsx";
 import Navbar from "./components/Navbar.jsx";
+import { Route, Routes } from "react-router-dom";
+import Layout from "./components/Layout.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 export default function App() {
   return (
-    <div className="">
-      <Navbar />
-      <Home />
-    </div>
+    <Routes>
+      <Route path="login" element={<Login />} />
+      <Route element={<Layout />}>
+        <Route path="/home?" element={<Home />} />
+      </Route>
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
