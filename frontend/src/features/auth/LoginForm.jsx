@@ -1,6 +1,9 @@
-import React, { useState } from "react";
-import googleLogo from "../assets/google-logo.png";
-import InputFeild from "./InputFeild";
+import React, { useEffect, useState } from "react";
+import googleLogo from "../../assets/google-logo.png";
+import InputFeild from "../../components/InputFeild";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "./AuthThunk";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const initialFormdata = {
   email: "",
@@ -11,6 +14,15 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFromData] = useState(initialFormdata);
 
+  const dispatch = useDispatch();
+  const { isAuthenticated, loading, error } = useSelector(
+    (state) => state.auth
+  );
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.pathname || "/";
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFromData((prev) => ({ ...prev, [name]: value }));
@@ -19,7 +31,14 @@ const LoginForm = () => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     console.log("formData :", formData);
+    dispatch(loginUser(formData));
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, from, navigate]);
 
   return (
     <form
@@ -39,6 +58,14 @@ const LoginForm = () => {
         <span>Sign in with Google</span>
       </a>
       <p className="text-sm opacity-50 text-center">OR</p>
+      {error && (
+        <p className="text-sm text-center text-red-500 capitalize">
+          <span title={error}>
+            <i className="ri-error-warning-fill"></i>
+          </span>
+          <span className="font-semibold">{error}</span>
+        </p>
+      )}
       <InputFeild
         label="Email"
         type="email"
@@ -80,13 +107,14 @@ const LoginForm = () => {
             Remember Me
           </label>
         </div>
-        <p className="text-sm font-medium opacity-70">Forgot Password?</p>
+        <p className=" font-medium opacity-70">Forgot Password?</p>
       </div>
       <button
         type="submit"
-        className="rounded-full shadow-md p-2 text-center font-medium bg-orange-800 text-white"
+        disabled={loading}
+        className="rounded-full shadow-md p-2 text-center font-medium bg-orange-800 text-white cursor-pointer disabled:cursor-progress"
       >
-        Login
+        {loading ? "Loading..." : "Login"}
       </button>
     </form>
   );

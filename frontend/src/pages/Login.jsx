@@ -1,15 +1,15 @@
 import React from "react";
-import LoginForm from "../components/LoginForm";
+import LoginForm from "../features/auth/LoginForm";
 
 const Login = () => {
   console.log(window.location);
   return (
     <main className="w-full bg-green-100 h-screen flex">
-      <section className="w-3/8 h-full bg-zinc-50 text-black">
+      <section className="min-w-sm md:min-w-md h-full bg-zinc-50 text-black">
         <div className="ml-[8vw] py-10">
           <h1 className="text-xl font-bold">USHOP</h1>
         </div>
-        <div className="flex-1 px-[8vw] py-5">
+        <div className="flex-shrink-0 px-[8vw] py-5">
           <LoginForm />
         </div>
       </section>
