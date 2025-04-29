@@ -50,13 +50,13 @@ const LoginForm = () => {
       <h3 className="text-sm opacity-60">
         Choose from 10,000+ products across 400+ categories
       </h3>
-      <a
-        href="https://www.google.com"
-        className="rounded-full shadow-md p-2 text-center font-medium flex items-center justify-center gap-1"
+      <button
+        disabled={true}
+        className="rounded-full shadow-md p-2 text-center font-medium flex items-center justify-center gap-1 disabled:cursor-not-allowed"
       >
         <img src={googleLogo} alt="google" className="w-[1.3em]" />
         <span>Sign in with Google</span>
-      </a>
+      </button>
       <p className="text-sm opacity-50 text-center">OR</p>
       {error && (
         <p className="text-sm text-center text-red-500 capitalize">
@@ -74,6 +74,7 @@ const LoginForm = () => {
         value={formData.email}
         onChange={handleInputChange}
         required
+        autofocus="on"
       />
       <div className="flex flex-col">
         <label htmlFor="password" className="font-medium">
@@ -92,17 +93,28 @@ const LoginForm = () => {
           />
           <button
             type="button"
-            className="absolute top-1/2 right-4 -translate-y-1/2"
+            className="absolute top-1/2 right-4 -translate-y-1/2 w-fit h-fit opacity-80"
             onClick={() => setShowPassword((prev) => !prev)}
           >
-            {showPassword ? "hide" : "show"}
+            <span>
+              {showPassword ? (
+                <i className="ri-eye-off-fill"></i>
+              ) : (
+                <i className="ri-eye-fill"></i>
+              )}
+            </span>
           </button>
         </div>
       </div>
 
       <div className=" my-2 flex items-center justify-between gap-1">
         <div className="flex items-center gap-1">
-          <input type="checkbox" name="persist" id="persist" />
+          <input
+            type="checkbox"
+            name="persist"
+            id="persist"
+            className=" accent-orange-700"
+          />
           <label htmlFor="persist" className="text-sm font-medium opacity-70">
             Remember Me
           </label>
