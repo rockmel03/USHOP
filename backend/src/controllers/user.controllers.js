@@ -34,9 +34,9 @@ export const registerUser = asyncHandler(async (req, res) => {
   // generate tokens
   // send response and set cookies
 
-  const { email, password, role = "customer" } = req.body;
-  if (!(email && password)) {
-    throw new ApiError(400, "email & password required");
+  const { fullname, email, password, role = "customer" } = req.body;
+  if (!(fullname && email && password)) {
+    throw new ApiError(400, "fullname, email & password required");
   }
   // todo: check email is valid and password must strong
 
@@ -44,6 +44,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   if (existingUser) throw new ApiError(400, "user already exists");
 
   const user = await User.create({
+    fullname,
     email,
     password,
     role,
@@ -55,7 +56,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .cookies("refreshToken", refreshToken, {
+    .cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: true,
       secure: process.env.NODE_ENV === "production",
@@ -95,7 +96,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookies("refreshToken", refreshToken, {
+    .cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: true,
       secure: process.env.NODE_ENV === "production",
@@ -131,7 +132,7 @@ export const refreshUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookies("refreshToken", refreshToken, {
+    .cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: true,
       secure: process.env.NODE_ENV === "production",
