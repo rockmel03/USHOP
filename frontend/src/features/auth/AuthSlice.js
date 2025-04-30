@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser, logoutUser } from "./AuthThunk";
+import { loginUser, logoutUser, refreshAuthToken } from "./AuthThunk";
 
 const initialState = {
   isAuthenticated: false,
@@ -21,7 +21,7 @@ const AuthSlice = createSlice({
         state.user = user;
       }
     },
-    logout: (state, action) => {
+    logout: (state) => {
       state.isAuthenticated = false;
       state.token = null;
       state.user = null;
@@ -42,6 +42,35 @@ const AuthSlice = createSlice({
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.token = null;
+        state.user = null;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(refreshAuthToken.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(refreshAuthToken.fulfilled, (state, action) => {
+        if (action.payload?.token) {
+          state.loading = false;
+          state.token = action.payload.token;
+          state.isAuthenticated = true;
+        }
+      })
+      .addCase(refreshAuthToken.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
