@@ -3,7 +3,7 @@ import googleLogo from "../../assets/google-logo.png";
 import InputFeild from "../../components/InputFeild";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "./AuthThunk";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const initialFormdata = {
   email: "",
@@ -74,7 +74,7 @@ const LoginForm = () => {
         value={formData.email}
         onChange={handleInputChange}
         required
-        autofocus="on"
+        autoFocus="on"
       />
       <div className="flex flex-col">
         <label htmlFor="password" className="font-medium">
@@ -128,6 +128,12 @@ const LoginForm = () => {
       >
         {loading ? "Loading..." : "Login"}
       </button>
+      <p className="text-center">
+        Do not have an account?{" "}
+        <Link to="/register" className="text-orange-500 hover:underline">
+          Create here
+        </Link>
+      </p>
     </form>
   );
 };
