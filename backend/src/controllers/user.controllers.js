@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { validationResult } from "express-validator";
 
 const generateAccessRefreshTokens = async (_id) => {
   try {
@@ -27,6 +28,13 @@ const generateAccessRefreshTokens = async (_id) => {
   }
 };
 
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: true,
+  secure: process.env.NODE_ENV === "production",
+  maxAge: 60 * 60 * 60 * 24,
+};
+
 export const registerUser = asyncHandler(async (req, res) => {
   // validation
   // check existing user
@@ -34,13 +42,12 @@ export const registerUser = asyncHandler(async (req, res) => {
   // generate tokens
   // send response and set cookies
 
-  const { fullname, email, password, role = "customer" } = req.body;
-  if (!(fullname && email && password)) {
-    throw new ApiError(400, "fullname, email & password required");
-  }
-  // todo: check email is valid and password must strong
+  const result = validationResult(req);
+  if (!result.isEmpty()) throw ApiError.validationError(result.array());
 
-  const existingUser = await User.findOne({ email, role });
+  const { fullname, email, password, role } = req.body;
+
+  const existingUser = await User.findOne({ email });
   if (existingUser) throw new ApiError(400, "user already exists");
 
   const user = await User.create({
@@ -56,12 +63,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      sameSite: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 60 * 24,
-    })
+    .cookie("refreshToken", refreshToken, cookieOptions)
     .json(
       new ApiResponse(
         201,
@@ -78,11 +80,10 @@ export const loginUser = asyncHandler(async (req, res) => {
   // generate tokens
   // send response and set cookies
 
+  const result = validationResult(req);
+  if (!result.isEmpty()) throw ApiError.validationError(result.array());
+
   const { email, password } = req.body;
-  if (!(email && password)) {
-    throw new ApiError(400, "email & password required");
-  }
-  // todo: check email is valid
 
   const user = await User.findOne({ email }).select("+password");
   if (!user) throw new ApiError(400, "invalid credentials");
@@ -96,12 +97,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      sameSite: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 60 * 24,
-    })
+    .cookie("refreshToken", refreshToken, cookieOptions)
     .json(
       new ApiResponse(
         200,
@@ -116,9 +112,11 @@ export const refreshUser = asyncHandler(async (req, res) => {
   // verify jwt
   // generate tokens
   // send response and set cookie
+  const result = validationResult(req);
+  if (!result.isEmpty()) throw ApiError.validationError(result.array());
 
-  const token = req.cookie?.refreshToken || req.body.refreshToken;
-  if (!token) throw new ApiError(400, "invalid refresh token");
+  const token = req.cookies?.refreshToken || req.body.refreshToken;
+  if (!token) throw new ApiError(404, "refresh token not found");
 
   let decoded;
   try {
@@ -132,12 +130,7 @@ export const refreshUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      sameSite: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 60 * 24,
-    })
+    .cookie("refreshToken", refreshToken, cookieOptions)
     .json(
       new ApiResponse(
         200,
@@ -151,13 +144,8 @@ export const logoutUser = asyncHandler(async (req, res) => {
   // clear cookies
   // todo: blacklist tokens
 
-  return res(200)
-    .clearCookie("refreshToken", {
-      httpOnly: true,
-      sameSite: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 60 * 24,
-    })
+  return res.status(200)
+    .clearCookie("refreshToken", cookieOptions)
     .json(new ApiResponse(200, null, "user logged out successfully"));
 });
 

@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { USER_ROLES_ENUM } from "../constants.js";
 
 const userSchema = new Schema(
   {
@@ -21,7 +22,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       default: "customer",
-      enum: ["customer", "seller", "admin"],
+      enum: USER_ROLES_ENUM,
     },
     // Basic profile information
     phoneNumber: {
@@ -66,6 +67,7 @@ userSchema.methods.generateAccessToken = function () {
       user: {
         _id: this._id,
         email: this.email,
+        fullname: this.fullname,
         role: this.role,
       },
     },
