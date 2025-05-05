@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout/Layout.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Register from "./pages/Register.jsx";
+import AddProduct from "./pages/seller/AddProduct.jsx";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/home?" element={<Home />} />
       </Route>
+      <Route path="add" element={<AddProduct />} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>
