@@ -1,8 +1,7 @@
 import Login from "./pages/Login.jsx";
 import Home from "./pages/Home.jsx";
-import Navbar from "./components/Navbar.jsx";
 import { Route, Routes } from "react-router-dom";
-import Layout from "./components/Layout.jsx";
+import Layout from "./components/Layout/Layout.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Register from "./pages/Register.jsx";
 
