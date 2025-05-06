@@ -1,9 +1,11 @@
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const destinationPath = path.join(__dirname, "..", "..", "public", "temp");
 
 // Define allowed file types
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/jpg"];
@@ -11,13 +13,9 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    const destinationPath = path.join(
-      __dirname,
-      "..",
-      "..",
-      "public",
-      "uploads"
-    );
+    if (!fs.existsSync(destinationPath)) {
+      fs.mkdirSync(destinationPath, { recursive: true });
+    }
     return callback(null, destinationPath);
   },
   filename: function (req, file, callback) {

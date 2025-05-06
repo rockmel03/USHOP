@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import ApiError from "../utils/ApiError";
-import ApiResponse from "../utils/ApiResponse";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
 
 export default function authMiddleware(roles = []) {
   return async (req, res, next) => {
