@@ -5,7 +5,7 @@ import ApiResponse from "../utils/ApiResponse.js";
 export default function authMiddleware(roles = []) {
   return async (req, res, next) => {
     try {
-      const token = req.header?.authorization?.replace("Bearer ", "");
+      const token = req.headers?.authorization?.replace("Bearer ", "");
       if (!token) {
         throw new ApiError(401, "Authentication token not found");
       }

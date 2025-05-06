@@ -22,10 +22,10 @@ router
     createCategory
   );
 router
-  .route("/:catergoryId")
+  .route("/:id")
   .delete(
     authMiddleware(["admin"]),
-    [param("catergoryId").isMongoId().withMessage("invalid Id")],
+    [param("id").isMongoId().withMessage("invalid Id")],
     deleteCategoryById
   );
 export default router;

@@ -55,8 +55,11 @@ export const getAllCategories = asyncHandler(async (req, res) => {
 });
 
 export const deleteCategoryById = asyncHandler(async (req, res) => {
-  const { categoryId } = req.param;
-  const category = await Category.findByIdAndDelete(categoryId);
+  const { id } = req.params;
+
+  const category = await Category.findByIdAndDelete(id);
+  if (!category)
+    throw new ApiError(404, "category not found or already deleted");
 
   return res
     .status(200)
