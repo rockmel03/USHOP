@@ -19,6 +19,8 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 
 // routes import
 import userRouter from "./routes/user.routes.js";
+import categoryRouter from "./routes/category.routes.js";
+import productRouter from "./routes/product.routes.js";
 
 // routes
 app.get("/", (req, res) => {
@@ -26,6 +28,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/category", categoryRouter);
+app.use("/api/v1/products", productRouter);
 
 // default error handler
 app.use(errorHandler);

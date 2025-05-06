@@ -1,8 +1,9 @@
 import Product from "../models/product.model.js";
-import Category from "../models/category.model.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { validationResult } from "express-validator";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 export const getAllProducts = asyncHandler(async (req, res) => {
   const { name, category, limit = 10, page = 1 } = req.query;
@@ -86,47 +87,39 @@ export const getProductById = asyncHandler(async (req, res) => {
 });
 
 export const addProduct = asyncHandler(async (req, res) => {
+  // validation
+  const result = validationResult(req);
+  if (!result.isEmpty()) throw ApiError.validationError(result.array());
+
+  if (req.files?.length === 0) throw new ApiError(400, "images are required");
   const { name, description, price, category, stock } = req.body;
 
-  // Validate required fields
-  if (
-    [name, description, price, category, stock].some(
-      (field) => !field || field === ""
-    )
-  ) {
-    throw new ApiError(400, "All fields are required");
-  }
-
-  // Validate numeric fields
-  if (isNaN(price) || isNaN(stock)) {
-    throw new ApiError(400, "Price and stock must be numbers");
-  }
-
-  if (Number(price) <= 0 || Number(stock) < 0) {
-    throw new ApiError(
-      400,
-      "Price must be greater than 0 and stock cannot be negative"
-    );
-  }
-
-  const foundCategory = await Category.findOne({
-    $or: [{ _id: category }, { name: category }],
-  });
-  if (!foundCategory) throw new ApiError(400, "Category not found");
-
-  const product = await Product.create({
+  const product = new Product({
     name,
     description,
     price: Number(price),
-    images: req.files?.map((file) => file.path) || [],
+    images: [],
     category,
     stock: Number(stock),
     seller: req.user._id,
   });
 
+  for (let i = 0; i < req.files.length; i++) {
+    const uploadResult = await uploadOnCloudinary(req.files[i].path);
+    if (uploadResult) {
+      product.images.push({
+        url: uploadResult.url,
+        alt: product.name.replace(" ", "_") + "_" + i,
+      });
+    }
+  }
+  const savedProduct = await product.save();
+
   return res
     .status(201)
-    .json(ApiResponse.success(product, "Product created successfully", 201));
+    .json(
+      ApiResponse.success(savedProduct, "Product created successfully", 201)
+    );
 });
 
 export const updateProduct = asyncHandler(async (req, res) => {
