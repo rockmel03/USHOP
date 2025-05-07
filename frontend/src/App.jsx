@@ -5,6 +5,7 @@ import Layout from "./components/Layout/Layout.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Register from "./pages/Register.jsx";
 import AddProduct from "./pages/seller/AddProduct.jsx";
+import AddCategory from "./pages/admin/AddCategory.jsx";
 
 export default function App() {
   return (
@@ -15,6 +16,11 @@ export default function App() {
         <Route path="/home?" element={<Home />} />
       </Route>
       <Route path="add" element={<AddProduct />} />
+      <Route path="admin">
+        <Route path="category">
+          <Route path="add" element={<AddCategory />} />
+        </Route>
+      </Route>
 
       <Route path="*" element={<NotFound />} />
     </Routes>
