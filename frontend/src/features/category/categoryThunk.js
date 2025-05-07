@@ -7,11 +7,17 @@ export const getAllCategory = createAsyncThunk(
     const searchParams = new URLSearchParams();
     searchParams.append("limit", query?.limit || 10);
     searchParams.append("page", query?.page || 1);
-
+    const abortController = new AbortController();
     try {
       const response = await axios.get(
-        "/categories/?" + searchParams.toString()
+        "/categories/?" + searchParams.toString(),
+        { signal: abortController.signal }
       );
+
+      if (thunkApi.signal.aborted) {
+        abortController.abort();
+        return thunkApi.rejectWithValue("Request Aborted");
+      }
       return response.data;
     } catch (error) {
       console.log(error);
@@ -26,7 +32,11 @@ export const addNewCategory = createAsyncThunk(
   "category/add",
   async (data, thunkApi) => {
     try {
-      const response = await axios.post("/categories/");
+      const response = await axios.post("/categories/", data, {
+        headers: {
+          Authorization: "Bearer " + thunkApi.getState().auth?.token
+        }
+      });
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(

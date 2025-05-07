@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 export const DropDownList = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -11,13 +12,15 @@ export const DropDownList = () => {
         </span>
         <span>Profile</span>
       </div>
-      {isAuthenticated && user.role === "seller" && (
-        <div className="px-2 py-1 shadow">
-          <span className="mr-2">
-            <i className="ri-function-add-line"></i>
-          </span>
-          <span>Add Product</span>
-        </div>
+      {isAuthenticated && ["seller", "admin"].includes(user.role) && (
+        <Link to="/dashboard">
+          <div className="px-2 py-1 shadow">
+            <span className="mr-2">
+              <i className="ri-dashboard-line"></i>
+            </span>
+            <span>Dashboard</span>
+          </div>
+        </Link>
       )}
       {isAuthenticated && (
         <div className="px-2 py-1 shadow">

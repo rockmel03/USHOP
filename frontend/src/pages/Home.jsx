@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getAllCategory } from "../features/category/categoryThunk";
 
 const categories = [
   {
@@ -101,6 +103,13 @@ const collageData = [
 ];
 
 const Home = () => {
+  const { loading, error, value } = useSelector((state) => state.categories);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllCategory());
+  }, [dispatch]);
+
   return (
     <main className="w-full min-h-screen max-w-[1440px] mx-auto overflow-hidden">
       <section className="w-full h-[80vh] grid grid-cols-12 grid-rows-2 gap-4 p-5">

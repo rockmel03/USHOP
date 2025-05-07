@@ -3,15 +3,17 @@ import InputFeild from "../../components/InputFeild";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewCategory } from "./categoryThunk";
 
+const initialFormData = {
+  name: "",
+  description: "",
+  isActive: true,
+};
+
 export default function CategoryForm() {
   const { loading, error } = useSelector((state) => state.categories);
   const dispatch = useDispatch();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    isActive: true,
-  });
+  const [formData, setFormData] = useState(initialFormData);
 
   const inputChangeHandler = (e) => {
     const { name, value } = e.target;
@@ -22,7 +24,9 @@ export default function CategoryForm() {
     e.preventDefault();
     console.log(formData);
     if (loading) return;
-    dispatch(addNewCategory(formData));
+    dispatch(addNewCategory(formData)).then(() => {
+      setFormData(initialFormData);
+    });
   };
 
   return (
@@ -50,6 +54,7 @@ export default function CategoryForm() {
           className="rounded-md shadow-md py-2 px-4 w-full resize-none"
           name="description"
           onChange={inputChangeHandler}
+          value={formData.description}
           placeholder="Category Description"
         ></textarea>
       </div>
@@ -70,7 +75,7 @@ export default function CategoryForm() {
         className="px-4 py-2 bg-violet-950 rounded text-white"
         type="submit"
       >
-        {loading ? "Loading ..." : "Save"}{" "}
+        {loading ? "Loading ..." : "Save"}
       </button>
     </form>
   );
