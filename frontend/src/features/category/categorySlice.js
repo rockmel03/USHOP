@@ -1,8 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addNewCategory, getAllCategory } from "./categoryThunk";
+import {
+  addNewCategory,
+  deleteCategory,
+  getAllCategory,
+  updateCategory,
+} from "./categoryThunk";
 
 const initialState = {
-  value: {},
+  value: [],
   loading: false,
   error: null,
 };
@@ -17,9 +22,10 @@ const categorySlice = createSlice({
         state.loading = true;
       })
       .addCase(getAllCategory.fulfilled, (state, action) => {
-        state.value = action.payload?.data;
         state.loading = false;
         state.error = null;
+
+        state.value = [...state.value, ...action.payload.data.categories];
       })
       .addCase(getAllCategory.rejected, (state, action) => {
         state.loading = false;
@@ -27,14 +33,44 @@ const categorySlice = createSlice({
       })
       .addCase(addNewCategory.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(addNewCategory.fulfilled, (state, action) => {
-        state.value.categories?.push(action.payload?.data);
         state.loading = false;
         state.error = null;
+
+        state.value = [...state.value, ...action.payload.data];
       })
       .addCase(addNewCategory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateCategory.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateCategory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+
+        state.value = state.value.map((category) => {
+          if (category._id !== action.payload._id) return category;
+          return action.payload;
+        });
+      })
+      .addCase(updateCategory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteCategory.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteCategory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.value = state.value.filter(
+          (category) => category._id !== action.payload._id
+        );
+      })
+      .addCase(deleteCategory.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
