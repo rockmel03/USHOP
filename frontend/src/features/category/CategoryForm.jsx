@@ -1,19 +1,10 @@
 import { useState } from "react";
 import InputFeild from "../../components/InputFeild";
-import { useDispatch, useSelector } from "react-redux";
-import { addNewCategory } from "./categoryThunk";
 
-const initialFormData = {
-  name: "",
-  description: "",
-  isActive: true,
-};
+const initialFormData = { name: "", description: "", isActive: true };
 
-export default function CategoryForm() {
-  const { loading, error } = useSelector((state) => state.categories);
-  const dispatch = useDispatch();
-
-  const [formData, setFormData] = useState(initialFormData);
+export default function CategoryForm({ data, onSubmit, loading }) {
+  const [formData, setFormData] = useState(data || initialFormData);
 
   const inputChangeHandler = (e) => {
     const { name, value } = e.target;
@@ -22,18 +13,11 @@ export default function CategoryForm() {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(formData);
-    if (loading) return;
-    dispatch(addNewCategory(formData)).then(() => {
-      setFormData(initialFormData);
-    });
+    onSubmit(formData);
   };
 
   return (
     <form onSubmit={submitHandler} className="p-4 flex flex-col gap-3">
-      {error && (
-        <p className="text-sm font-medium text-red-500 text-center">{error}</p>
-      )}
       <InputFeild
         label={"Name"}
         value={formData.name}

@@ -38,7 +38,7 @@ const categorySlice = createSlice({
         state.loading = false;
         state.error = null;
 
-        state.value = [...state.value, ...action.payload.data];
+        state.value = [...state.value, action.payload.data];
       })
       .addCase(addNewCategory.rejected, (state, action) => {
         state.loading = false;
