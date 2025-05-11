@@ -144,10 +144,52 @@ export const logoutUser = asyncHandler(async (req, res) => {
   // clear cookies
   // todo: blacklist tokens
 
-  return res.status(200)
+  return res
+    .status(200)
     .clearCookie("refreshToken", cookieOptions)
     .json(new ApiResponse(200, null, "user logged out successfully"));
 });
 
 export const getUserProfile = asyncHandler(async (req, res) => {});
-export const getAllUsers = asyncHandler(async (req, res) => {});
+
+export const getAllUsers = asyncHandler(async (req, res) => {
+  const result = validationResult(req);
+  if (!result.isEmpty()) throw ApiError.validationError(result.array());
+
+  const { page = 1, limit = 10 } = req.query;
+
+  const users = await User.aggregate([
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
+      skip: Number(limit) - (Number(page) - 1),
+    },
+    {
+      $limit: Number(limit),
+    },
+    {
+      $project: {
+        fullname: 1,
+        email: 1,
+        role: 1,
+        isVerified: 1,
+      },
+    },
+  ]);
+
+  const totalDocuments = await User.countDocuments();
+
+  return res.status(200).json(
+    {
+      users,
+      totalDocuments,
+      totalPages: totalDocuments / Number(limit),
+      currentPage: Number(page),
+      currentLimit: Number(limit),
+    },
+    "Users fetched successfully"
+  );
+});

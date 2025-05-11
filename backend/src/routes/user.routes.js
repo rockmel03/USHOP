@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 import {
   getAllUsers,
   getUserProfile,
@@ -9,6 +9,7 @@ import {
   registerUser,
 } from "../controllers/user.controllers.js";
 import { USER_ROLES_ENUM } from "../constants.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -65,6 +66,21 @@ router
   );
 router.route("/logout").get(logoutUser);
 router.route("/profile").get(getUserProfile);
-router.route("/").get(getAllUsers);
+router
+  .route("/")
+  .get(
+    authMiddleware(["admin"]),
+    [
+      query("page")
+        .default(1)
+        .isInt({ min: 1 })
+        .withMessage("page should be an integer"),
+      query("limit")
+        .default(10)
+        .isInt()
+        .withMessage("limit should be an integer"),
+    ],
+    getAllUsers
+  );
 
 export default router;
