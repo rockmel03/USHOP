@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { act, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
 import {
@@ -8,6 +8,7 @@ import {
 import AddCategoryForm from "../../../features/category/AddCategoryForm";
 import Modal from "../../../components/Modal";
 import EditCategoryForm from "../../../features/category/EditCategoryForm";
+import toast from "react-hot-toast";
 
 export default function Categories() {
   const {
@@ -44,7 +45,15 @@ export default function Categories() {
 
   const handleDeleteCategory = () => {
     if (!deleteId) return;
-    dispatch(deleteCategory(deleteId));
+    const toastId = toast.loading("Loading...");
+    dispatch(deleteCategory(deleteId)).then((action) => {
+      toast.dismiss(toastId);
+      if (action.error) return toast.error(action.payload);
+      if (action.payload.status) {
+        toast.success(action.payload.message || "Deleted Successfully!");
+        setShowDeleteModal(false);
+      }
+    });
   };
 
   useEffect(() => {
@@ -78,7 +87,7 @@ export default function Categories() {
           {categoriesData.length > 0 ? (
             categoriesData?.map((data, idx) => {
               return (
-                <li>
+                <li key={data._id}>
                   <div className="grid grid-cols-[0.2fr_1fr_2fr_0.5fr_0.5fr] px-2 py-4">
                     <p className="font-medium">{idx + 1}.</p>
                     <Link to={`?edit=${data._id}`} className="hover:underline">

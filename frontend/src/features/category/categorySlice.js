@@ -52,8 +52,8 @@ const categorySlice = createSlice({
         state.error = null;
 
         state.value = state.value.map((category) => {
-          if (category._id !== action.payload._id) return category;
-          return action.payload;
+          if (category._id !== action.payload.data._id) return category;
+          return action.payload.data;
         });
       })
       .addCase(updateCategory.rejected, (state, action) => {
@@ -67,7 +67,7 @@ const categorySlice = createSlice({
         state.loading = false;
         state.error = null;
         state.value = state.value.filter(
-          (category) => category._id !== action.payload._id
+          (category) => category._id !== action.payload.data._id
         );
       })
       .addCase(deleteCategory.rejected, (state, action) => {

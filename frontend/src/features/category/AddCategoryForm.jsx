@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewCategory } from "./categoryThunk";
 import CategoryForm from "./CategoryForm";
+import Success from "../../components/Success";
+import toast from "react-hot-toast";
 
 function AddCategoryForm() {
   const { loading, error } = useSelector((state) => state.categories);
@@ -9,29 +11,29 @@ function AddCategoryForm() {
   const [success, setSuccess] = useState(false);
 
   const submitHandler = (formData) => {
-    console.log(formData);
     if (loading) return;
+
+    const toastId = toast.loading("Loading...");
     dispatch(addNewCategory(formData)).then((action) => {
-      action.payload.status && setSuccess(true);
+      toast.dismiss(toastId);
+      if (action.error) return toast.error(action.payload);
+
+      if (action.payload.status) {
+        toast.success(action.payload.message || "Added Successfully!");
+        setSuccess(true);
+      }
     });
   };
 
-  if (success) {
-    return (
-      <div className="w-full h-full grid place-items-center">
-        <h3 className="text-green-500 text-xl font-medium">Success</h3>
-      </div>
-    );
-  }
-
   return (
-    <>
+    <div className=" relative">
       <h1 className="text-3xl font-semibold text-center">New Category</h1>
       {error && (
         <p className="text-sm font-medium text-red-500 text-center">{error}</p>
       )}
+      {success && <Success message="Category Added Successfully!" />}
       <CategoryForm onSubmit={submitHandler} loading={loading} />
-    </>
+    </div>
   );
 }
 

@@ -59,7 +59,7 @@ export const updateCategory = createAsyncThunk(
         },
       });
       if (response.data?.status) {
-        return response.data.data;
+        return response.data;
       }
       return thunkApi.rejectWithValue("Failed to update");
     } catch (error) {
@@ -81,7 +81,7 @@ export const deleteCategory = createAsyncThunk(
         },
       });
       if (response.data?.status) {
-        return response.data.data;
+        return response.data;
       }
       return thunkApi.rejectWithValue("Failed to delete");
     } catch (error) {
