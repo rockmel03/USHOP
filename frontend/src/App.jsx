@@ -11,6 +11,7 @@ import Users from "./pages/dashboard/list/Users.jsx";
 import Sellers from "./pages/dashboard/list/Sellers.jsx";
 import Products from "./pages/dashboard/list/Products.jsx";
 import Categories from "./pages/dashboard/list/Categories.jsx";
+import RequireAuth from "./features/auth/RequireAuth.jsx";
 
 export default function App() {
   return (
@@ -20,19 +21,15 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/home?" element={<Home />} />
       </Route>
-      <Route path="add" element={<AddProduct />} />
-      <Route path="admin">
-        <Route path="category">
-          <Route path="add" element={<AddCategory />} />
-        </Route>
-      </Route>
-      <Route path="dashboard" element={<Dashboard />}>
-        {/* <Route index element={<Home />} /> */}
-        <Route path="list">
-          <Route path="users" element={<Users />} />
-          <Route path="sellers" element={<Sellers />} />
-          <Route path="products" element={<Products />} />
-          <Route path="categories" element={<Categories />} />
+      <Route element={<RequireAuth roles={["seller", "admin"]} />}>
+        <Route path="dashboard" element={<Dashboard />}>
+          {/* <Route index element={<Home />} /> */}
+          <Route path="list">
+            <Route path="users" element={<Users />} />
+            <Route path="sellers" element={<Sellers />} />
+            <Route path="products" element={<Products />} />
+            <Route path="categories" element={<Categories />} />
+          </Route>
         </Route>
       </Route>
 
