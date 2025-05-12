@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import InputFeild from "../../components/InputFeild";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -34,7 +35,17 @@ const RegisterForm = () => {
     e.preventDefault();
     console.log("formData :", formData);
     // dispatch
-    dispatch(registerUser(formData));
+    const toastId = toast.loading("Loading...");
+    dispatch(registerUser(formData)).then((action) => {
+      toast.dismiss(toastId);
+      if (action.error) return toast.error(action.payload);
+      if (action.payload?.token)
+        return toast.success(
+          `Welcome! ${
+            action.payload?.user ? action.payload.user.fullname : "User"
+          }`
+        );
+    });
   };
 
   useEffect(() => {
