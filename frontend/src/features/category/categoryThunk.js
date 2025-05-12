@@ -53,7 +53,11 @@ export const updateCategory = createAsyncThunk(
   "category/update",
   async ({ _id, ...restData }, thunkApi) => {
     try {
-      const response = await axios.put(`/categories/${_id}`, restData);
+      const response = await axios.put(`/categories/${_id}`, restData, {
+        headers: {
+          Authorization: "Bearer " + thunkApi.getState().auth?.token,
+        },
+      });
       if (response.data?.status) {
         return response.data.data;
       }
@@ -71,7 +75,11 @@ export const deleteCategory = createAsyncThunk(
   "category/delete",
   async (id, thunkApi) => {
     try {
-      const response = await axios.delete(`/categories/${id}`);
+      const response = await axios.delete(`/categories/${id}`, {
+        headers: {
+          Authorization: "Bearer " + thunkApi.getState().auth?.token,
+        },
+      });
       if (response.data?.status) {
         return response.data.data;
       }

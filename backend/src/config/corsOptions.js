@@ -11,7 +11,7 @@ export default {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET", "POST", "PATCH", "DELETE"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   optionsSuccessStatus: 200,
   credentials: true,
 };

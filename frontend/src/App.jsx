@@ -27,7 +27,7 @@ export default function App() {
         </Route>
       </Route>
       <Route path="dashboard" element={<Dashboard />}>
-        <Route index element={<Home />} />
+        {/* <Route index element={<Home />} /> */}
         <Route path="list">
           <Route path="users" element={<Users />} />
           <Route path="sellers" element={<Sellers />} />

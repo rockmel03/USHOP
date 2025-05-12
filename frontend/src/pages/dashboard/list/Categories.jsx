@@ -1,24 +1,58 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllCategory } from "../../../features/category/categoryThunk";
-import CategoryForm from "../../../features/category/CategoryForm";
+import { Link, useSearchParams } from "react-router-dom";
+import {
+  deleteCategory,
+  getAllCategory,
+} from "../../../features/category/categoryThunk";
+import AddCategoryForm from "../../../features/category/AddCategoryForm";
+import Modal from "../../../components/Modal";
+import EditCategoryForm from "../../../features/category/EditCategoryForm";
 
 export default function Categories() {
   const {
     loading,
     error,
-    value: data,
+    value: categoriesData,
   } = useSelector((state) => state.categories);
   const dispatch = useDispatch();
 
-  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [showEditCategory, setShowEditCategory] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const editId = searchParams.get("edit");
+  const deleteId = searchParams.get("delete");
 
   const handleAddNewCategory = () => {
-    setShowAddCategoryModal(true);
+    setShowAddCategory(true);
   };
 
   useEffect(() => {
-    if (loading) return;
+    if (editId) {
+      setShowEditCategory(true);
+    }
+  }, [editId]);
+
+  const onDeleteClick = (_id) => {
+    const params = new URLSearchParams();
+    params.set("delete", _id);
+    setSearchParams(params);
+  };
+
+  const handleDeleteCategory = () => {
+    if (!deleteId) return;
+    dispatch(deleteCategory(deleteId));
+  };
+
+  useEffect(() => {
+    if (deleteId) setShowDeleteModal(true);
+  }, [deleteId]);
+
+  useEffect(() => {
+    if (loading || categoriesData.length > 0) return;
 
     const dispatchPromise = dispatch(getAllCategory());
     return () => {
@@ -28,59 +62,113 @@ export default function Categories() {
 
   return (
     <main className="w-full h-full">
-      {(!data?.categories || data?.categories?.length === 0) && (
-        <p>No catergory(s) found</p>
-      )}
-      <div className="py-3 flex justify-between items-center">
-        <p className="text-xl font-semibold">
-          Categories ({data?.totalDocuments})
-        </p>
-        <button
-          onClick={handleAddNewCategory}
-          className=" px-4 py-2 rounded bg-blue-500 text-sm font-semibold text-white cursor-pointer"
-        >
-          <span>Add Category</span>
-        </button>
-      </div>
-      {showAddCategoryModal && (
-        <div
-          onClick={() => setShowAddCategoryModal(false)}
-          className="absolute top-0 left-0 w-full h-full grid place-items-center bg-zinc-500/50 backdrop-blur-sm"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="p-4 w-md bg-white rounded-md text-zinc-800"
-          >
-            <h1 className="text-3xl font-semibold text-center">New Category</h1>
-            <CategoryForm />
-          </div>
-        </div>
-      )}
       <section>
+        <div className="py-3 flex justify-between items-center">
+          <p className="text-xl font-semibold">
+            Categories ({categoriesData.length})
+          </p>
+          <button
+            onClick={handleAddNewCategory}
+            className=" px-4 py-2 rounded bg-blue-500 text-sm font-semibold text-white cursor-pointer"
+          >
+            <span>Add Category</span>
+          </button>
+        </div>
         <ul>
-          {data?.categories?.map((item, idx) => {
-            return (
-              <li key={item._id}>
-                <div className="grid grid-cols-[1fr_2fr_0.5fr_0.5fr] px-2 py-4">
-                  <h1>{item.name}</h1>
-                  <p title={item.description}>
-                    {item.description.split("").splice(0, 50).join("") + "..."}
-                  </p>
-                  <div>
-                    {item.isActive? "active": "not active"}
+          {categoriesData.length > 0 ? (
+            categoriesData?.map((data, idx) => {
+              return (
+                <li>
+                  <div className="grid grid-cols-[0.2fr_1fr_2fr_0.5fr_0.5fr] px-2 py-4">
+                    <p className="font-medium">{idx + 1}.</p>
+                    <Link to={`?edit=${data._id}`} className="hover:underline">
+                      <h1 className="font-medium">{data.name}</h1>
+                    </Link>
+                    <p title={data.description}>
+                      {data.description.split("").splice(0, 50).join("") +
+                        "..."}
+                    </p>
+                    <p className="text-sm font-medium">
+                      {data.isActive ? "Active" : "Inactive"}
+                    </p>
+                    <div className="flex justify-around">
+                      <button
+                        onClick={() => onDeleteClick(data._id)}
+                        type="button"
+                        className="w-fit text-zinc-500 hover:text-zinc-800 cursor-pointer active:scale-90 transition-all duration-200 ease"
+                      >
+                        <span className=" text-red-500">
+                          <i className="ri-delete-bin-fill ri-lg"></i>
+                        </span>
+                      </button>
+                    </div>
                   </div>
-                  <button className="text-red-500">
-                    <span>
-                      <i className="ri-delete-bin-5-line"></i>
-                    </span>
-                  </button>
-                </div>
-                <hr />
-              </li>
-            );
-          })}
+                  <hr />
+                </li>
+              );
+            })
+          ) : (
+            <p className="text-sm font font-semibold opacity-80">
+              No category found
+            </p>
+          )}
         </ul>
       </section>
+      <Modal
+        showModal={showAddCategory}
+        hideModal={() => setShowAddCategory(false)}
+      >
+        <div className="p-4 w-md bg-white rounded-md text-zinc-800">
+          <AddCategoryForm />
+        </div>
+      </Modal>
+
+      <Modal
+        showModal={showEditCategory}
+        hideModal={() => {
+          setShowEditCategory(false);
+          setSearchParams();
+        }}
+      >
+        <div className="p-4 w-md bg-white rounded-md text-zinc-800">
+          <EditCategoryForm dataId={editId} />
+        </div>
+      </Modal>
+
+      <Modal
+        showModal={showDeleteModal}
+        hideModal={() => {
+          setShowDeleteModal(false);
+          setSearchParams();
+        }}
+      >
+        <div className="bg-white w-sm p-5 rounded-lg flex flex-col items-center text-center gap-2">
+          <p className="text-5xl text-red-500">
+            <i className="ri-close-circle-line ri-lg"></i>
+          </p>
+          <h3 className="text-xl font-semibold">Are you sure?</h3>
+          <p>Do you really want to delete? this action can not undone.</p>
+          <div className="w-full flex gap-1 justify-between">
+            <button
+              type="button"
+              onClick={() => {
+                setShowDeleteModal(false);
+                setSearchParams();
+              }}
+              className="px-4 py-2 text-sm font-semibold bg-gray-500 rounded text-white"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteCategory}
+              className="px-4 py-2 text-sm font-semibold bg-red-400 rounded text-white"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
     </main>
   );
 }
