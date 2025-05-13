@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import googleLogo from "../../assets/google-logo.png";
 import { registerUser } from "./AuthThunk";
+import useToggle from "../../hooks/useToggle";
 
 const initialFormdata = {
   fullname: "",
@@ -16,6 +17,8 @@ const initialFormdata = {
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFromData] = useState(initialFormdata);
+
+  const [persist, togglePersist] = useToggle("persist", true);
 
   const dispatch = useDispatch();
   const { isAuthenticated, loading, error } = useSelector(
@@ -39,12 +42,15 @@ const RegisterForm = () => {
     dispatch(registerUser(formData)).then((action) => {
       toast.dismiss(toastId);
       if (action.error) return toast.error(action.payload);
-      if (action.payload?.token)
+      if (action.payload?.token) {
+        // set login state in localStorage
+        localStorage.setItem("isLoggedIn", JSON.stringify(true));
         return toast.success(
           `Welcome! ${
             action.payload?.user ? action.payload.user.fullname : "User"
           }`
         );
+      }
     });
   };
 
@@ -138,6 +144,8 @@ const RegisterForm = () => {
               name="persist"
               id="persist"
               className=" accent-orange-700"
+              checked={persist}
+              onChange={togglePersist}
             />
             <label htmlFor="persist" className="text-sm font-medium opacity-70">
               Remember Me

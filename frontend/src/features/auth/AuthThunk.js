@@ -50,7 +50,7 @@ export const refreshAuthToken = createAsyncThunk(
   "/auth/refresh",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("/users/refresh");
+      const response = await axios.post("/users/refresh");
       const token = response.data?.data?.accessToken;
       let user;
       if (token) {

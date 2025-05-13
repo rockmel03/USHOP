@@ -11,23 +11,27 @@ import Sellers from "../pages/dashboard/list/Sellers";
 import Products from "../pages/dashboard/list/Products";
 import Categories from "../pages/dashboard/list/Categories";
 import NotFound from "../pages/NotFound";
+import PersistLogin from "../features/auth/PersistLogin";
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
-      <Route element={<Layout />}>
-        <Route path="/home?" element={<Home />} />
-      </Route>
-      <Route element={<RequireAuth roles={["seller", "admin"]} />}>
-        <Route path="dashboard" element={<Dashboard />}>
-          {/* <Route index element={<Home />} /> */}
-          <Route path="list">
-            <Route path="users" element={<Users />} />
-            <Route path="sellers" element={<Sellers />} />
-            <Route path="products" element={<Products />} />
-            <Route path="categories" element={<Categories />} />
+
+      <Route element={<PersistLogin />}>
+        <Route element={<Layout />}>
+          <Route path="/home?" element={<Home />} />
+        </Route>
+        <Route element={<RequireAuth roles={["seller", "admin"]} />}>
+          <Route path="dashboard" element={<Dashboard />}>
+            {/* <Route index element={<Home />} /> */}
+            <Route path="list">
+              <Route path="users" element={<Users />} />
+              <Route path="sellers" element={<Sellers />} />
+              <Route path="products" element={<Products />} />
+              <Route path="categories" element={<Categories />} />
+            </Route>
           </Route>
         </Route>
       </Route>

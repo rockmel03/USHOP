@@ -115,8 +115,8 @@ export const refreshUser = asyncHandler(async (req, res) => {
   const result = validationResult(req);
   if (!result.isEmpty()) throw ApiError.validationError(result.array());
 
-  const token = req.cookies?.refreshToken || req.body.refreshToken;
-  if (!token) throw new ApiError(404, "refresh token not found");
+  const token = req.cookies?.refreshToken || req.body?.refreshToken;
+  if (!token) throw new ApiError(400, "refresh token not found");
 
   let decoded;
   try {

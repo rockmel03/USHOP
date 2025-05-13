@@ -2,7 +2,6 @@ import React from "react";
 import LoginForm from "../features/auth/LoginForm";
 
 const Login = () => {
-  console.log(window.location);
   return (
     <main className="w-full bg-green-100 h-screen flex">
       <section className="min-w-sm md:min-w-md h-full bg-zinc-50 text-black">

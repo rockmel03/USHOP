@@ -5,6 +5,7 @@ import InputFeild from "../../components/InputFeild";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "./AuthThunk";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import useToggle from "../../hooks/useToggle";
 
 const initialFormdata = {
   email: "",
@@ -14,6 +15,8 @@ const initialFormdata = {
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFromData] = useState(initialFormdata);
+
+  const [persist, togglePersist] = useToggle("persist", true);
 
   const dispatch = useDispatch();
   const { isAuthenticated, loading, error } = useSelector(
@@ -36,12 +39,15 @@ const LoginForm = () => {
     dispatch(loginUser(formData)).then((action) => {
       toast.dismiss(toastId);
       if (action.error) return toast.error(action.payload);
-      if (action.payload?.token)
+      if (action.payload?.token) {
+        // set login state in localStorage
+        localStorage.setItem("isLoggedIn", JSON.stringify(true));
         return toast.success(
           `Welcome! ${
             action.payload?.user ? action.payload.user.fullname : "User"
           }`
         );
+      }
     });
   };
 
@@ -125,6 +131,8 @@ const LoginForm = () => {
             name="persist"
             id="persist"
             className=" accent-orange-700"
+            checked={persist}
+            onChange={togglePersist}
           />
           <label htmlFor="persist" className="text-sm font-medium opacity-70">
             Remember Me
