@@ -6,11 +6,9 @@ import Success from "../../components/Success";
 import toast from "react-hot-toast";
 
 export default function EditCategoryForm({ dataId }) {
-  const {
-    loading,
-    error,
-    value: categories,
-  } = useSelector((state) => state.categories);
+  const { loading, value: categories } = useSelector(
+    (state) => state.categories
+  );
   const dispatch = useDispatch();
   const [success, setSuccess] = useState(false);
 
@@ -34,9 +32,6 @@ export default function EditCategoryForm({ dataId }) {
   return (
     <div className="relative">
       <h1 className="text-3xl font-semibold text-center">Edit Category</h1>
-      {error && (
-        <p className="text-sm font-medium text-red-500 text-center">{error}</p>
-      )}
       {success && <Success message={"Category Updated Successfully!"} />}
       {data && (
         <CategoryForm data={data} loading={loading} onSubmit={submitHandler} />

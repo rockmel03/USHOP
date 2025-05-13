@@ -6,7 +6,7 @@ import Success from "../../components/Success";
 import toast from "react-hot-toast";
 
 function AddCategoryForm() {
-  const { loading, error } = useSelector((state) => state.categories);
+  const { loading } = useSelector((state) => state.categories);
   const dispatch = useDispatch();
   const [success, setSuccess] = useState(false);
 
@@ -28,9 +28,6 @@ function AddCategoryForm() {
   return (
     <div className=" relative">
       <h1 className="text-3xl font-semibold text-center">New Category</h1>
-      {error && (
-        <p className="text-sm font-medium text-red-500 text-center">{error}</p>
-      )}
       {success && <Success message="Category Added Successfully!" />}
       <CategoryForm onSubmit={submitHandler} loading={loading} />
     </div>

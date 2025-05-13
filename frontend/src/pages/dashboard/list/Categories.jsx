@@ -1,4 +1,4 @@
-import React, { act, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
 import {
@@ -11,11 +11,9 @@ import EditCategoryForm from "../../../features/category/EditCategoryForm";
 import toast from "react-hot-toast";
 
 export default function Categories() {
-  const {
-    loading,
-    error,
-    value: categoriesData,
-  } = useSelector((state) => state.categories);
+  const { loading, value: categoriesData } = useSelector(
+    (state) => state.categories
+  );
   const dispatch = useDispatch();
 
   const [showAddCategory, setShowAddCategory] = useState(false);
@@ -52,6 +50,7 @@ export default function Categories() {
       if (action.payload.status) {
         toast.success(action.payload.message || "Deleted Successfully!");
         setShowDeleteModal(false);
+        setSearchParams();
       }
     });
   };
