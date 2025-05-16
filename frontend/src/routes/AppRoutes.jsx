@@ -2,16 +2,16 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import Layout from "./Layout/Layout";
 import Home from "../pages/Home";
-import RequireAuth from "../features/auth/RequireAuth";
+import RequireAuth from "../features/auth/components/RequireAuth";
 import Dashboard from "../pages/dashboard/Dashboard";
 import Users from "../pages/dashboard/list/Users";
 import Sellers from "../pages/dashboard/list/Sellers";
 import Products from "../pages/dashboard/list/Products";
 import Categories from "../pages/dashboard/list/Categories";
 import NotFound from "../pages/NotFound";
-import PersistLogin from "../features/auth/PersistLogin";
+import CustomerLayout from "../layouts/CustomerLayout";
+import PersistLogin from "../features/auth/components/PersistLogin";
 
 export default function AppRoutes() {
   return (
@@ -20,10 +20,10 @@ export default function AppRoutes() {
       <Route path="register" element={<Register />} />
 
       <Route element={<PersistLogin />}>
-        <Route element={<Layout />}>
+        <Route element={<CustomerLayout />}>
           <Route path="/home?" element={<Home />} />
         </Route>
-        <Route element={<RequireAuth roles={["seller", "admin"]} />}>
+        <Route element={<RequireAuth allowedRoles={["seller", "admin"]} />}>
           <Route path="dashboard" element={<Dashboard />}>
             {/* <Route index element={<Home />} /> */}
             <Route path="list">

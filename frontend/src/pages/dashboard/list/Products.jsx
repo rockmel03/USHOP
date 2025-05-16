@@ -1,8 +1,9 @@
-import { useSelector } from "react-redux";
-import ProductsList from "../../../features/product/ProductsList";
-import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import AddProductForm from "../../../features/seller/AddProduct/AddProductForm";
+import { useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+import ProductsList from "../../../features/product/components/ProductsList";
+import AddProductForm from "../../../features/product/components/AddProductForm";
 
 function Products() {
   const { value: products } = useSelector((state) => state.products);

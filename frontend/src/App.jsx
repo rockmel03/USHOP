@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCategory } from "./features/category/categoryThunk.js";
-import AppRoutes from "./components/AppRoutes.jsx";
+import AppRoutes from "./routes/AppRoutes.jsx";
 
 export default function App() {
   const { loading, value: categoriesData } = useSelector(

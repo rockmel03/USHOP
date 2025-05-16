@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   deleteCategory,
   getAllCategory,
 } from "../../../features/category/categoryThunk";
-import AddCategoryForm from "../../../features/category/AddCategoryForm";
 import Modal from "../../../components/Modal";
-import EditCategoryForm from "../../../features/category/EditCategoryForm";
-import toast from "react-hot-toast";
+import AddCategoryForm from "../../../features/category/components/AddCategoryForm";
+import EditCategoryForm from "../../../features/category/components/EditCategoryForm";
 
 export default function Categories() {
   const { loading, value: categoriesData } = useSelector(

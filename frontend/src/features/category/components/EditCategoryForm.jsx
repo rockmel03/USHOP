@@ -1,8 +1,8 @@
 import { useState } from "react";
 import CategoryForm from "./CategoryForm";
 import { useDispatch, useSelector } from "react-redux";
-import { updateCategory } from "./categoryThunk";
-import Success from "../../components/Success";
+import { updateCategory } from "../categoryThunk";
+import Success from "../../../components/Success";
 import toast from "react-hot-toast";
 
 export default function EditCategoryForm({ dataId }) {

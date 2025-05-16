@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { refreshAuthToken } from "./AuthThunk";
-import useLocalStorage from "../../hooks/useLocalStorage";
+import { refreshAuthToken } from "../AuthThunk";
+import useLocalStorage from "../../../hooks/useLocalStorage";
 
 export default function PersistLogin() {
   const [isLoggedIn] = useLocalStorage("isLoggedIn", false);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllProducts } from "./productThunk";
+import { getAllProducts } from "../productThunk";
 import ListItem from "./ListItem";
 
 function ProductsList() {

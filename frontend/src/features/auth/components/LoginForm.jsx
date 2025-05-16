@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import googleLogo from "../../assets/google-logo.png";
-import InputFeild from "../../components/InputFeild";
-import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "./AuthThunk";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import useToggle from "../../hooks/useToggle";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import googleLogo from "../../../assets/google-logo.png";
+import InputFeild from "../../../components/InputFeild";
+import { loginUser } from "../AuthThunk";
+import useToggle from "../../../hooks/useToggle";
 
 const initialFormdata = {
   email: "",

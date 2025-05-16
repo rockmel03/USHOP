@@ -1,5 +1,5 @@
 import { useState } from "react";
-import InputFeild from "../../components/InputFeild";
+import InputFeild from "../../../components/InputFeild";
 
 const initialFormData = { name: "", description: "", isActive: true };
 

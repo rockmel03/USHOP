@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { setAuthConfig } from "./config/axios/privateInstance";
+import { setAuthConfig } from "../config/axios/privateInstance";
 
-import AuthReducer from "./features/auth/AuthSlice";
-import CategoryReducer from "./features/category/categorySlice";
-import ProductsReducer from "./features/product/productSlice";
+import AuthReducer from "../features/auth/AuthSlice";
+import CategoryReducer from "../features/category/categorySlice";
+import ProductsReducer from "../features/product/productSlice";
 
 const store = configureStore({
   reducer: {

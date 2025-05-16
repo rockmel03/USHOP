@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewCategory } from "./categoryThunk";
-import CategoryForm from "./CategoryForm";
-import Success from "../../components/Success";
 import toast from "react-hot-toast";
+import CategoryForm from "./CategoryForm";
+import { addNewCategory } from "../categoryThunk";
+import Success from "../../../components/Success";
 
 function AddCategoryForm() {
   const { loading } = useSelector((state) => state.categories);
