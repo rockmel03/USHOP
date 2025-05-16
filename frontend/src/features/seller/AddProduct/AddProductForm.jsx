@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 import UploadImages from "../../../components/UploadImages";
 import InputFeild from "../../../components/InputFeild";
+import { useDispatch, useSelector } from "react-redux";
+import { addProduct } from "../../product/productThunk";
+import toast from "react-hot-toast";
+
+const initialFormData = {
+  name: "",
+  description: "",
+  category: "",
+  price: null,
+  stock: null,
+};
 
 export default function AddProductForm() {
   const [images, setImages] = useState([]);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    category: "",
-    price: null,
-    stock: null,
-  });
+  const [formData, setFormData] = useState(initialFormData);
+
+  const categories = useSelector((state) => state.categories.value);
+
+  const dispatch = useDispatch();
 
   const inputChangeHandler = (e) => {
     const { name, value } = e.target;
@@ -19,6 +28,32 @@ export default function AddProductForm() {
 
   const submitHandler = (e) => {
     e.preventDefault();
+
+    //validation
+    if (images.length === 0) {
+      toast.error("Please Provide atleast one image");
+      return;
+    }
+    const { name, description, category, price, stock } = formData;
+    if (
+      !name ||
+      !description ||
+      !category ||
+      price === null ||
+      stock === null
+    ) {
+      toast.error("Please fill in all the required fields.");
+      return;
+    }
+    if (price < 0 || stock < 0) {
+      toast.error("Price and Stock must be non-negative.");
+      return;
+    }
+
+    const reset = () => {
+      setFormData(initialFormData);
+      setImages([]);
+    };
     const data = new FormData();
     Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
@@ -26,16 +61,25 @@ export default function AddProductForm() {
     images.forEach((imgFile) => {
       data.append("images", imgFile);
     });
-    console.log(formData);
-    console.log(images);
     // Display the keys
     for (const key of data.keys()) {
       console.log(key, data.getAll(key));
     }
+
+    // post request
+    const toastId = toast.loading("Loading...");
+    dispatch(addProduct(data)).then((action) => {
+      toast.dismiss(toastId);
+      if (action.error) return toast.error(action.payload);
+      if (action.payload?.status) {
+        toast.success("Product created successfully");
+        reset();
+      }
+    });
   };
   return (
-    <form onSubmit={submitHandler} className="p-4 flex flex-col gap-3">
-      <h1 className="capitalize font-medium text-4xl">product information</h1>
+    <form onSubmit={submitHandler} className="p-4 flex flex-col gap-2">
+      <h1 className="capitalize font-medium text-2xl">product information</h1>
 
       <div className="">
         <h3 className="font-medium">Images</h3>
@@ -82,10 +126,14 @@ export default function AddProductForm() {
         <option value="" defaultChecked>
           Select Category
         </option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
+        {categories?.length > 0 &&
+          categories.map((category) => {
+            return (
+              <option key={category._id} value={category._id}>
+                {category.name}
+              </option>
+            );
+          })}
       </select>
       <InputFeild
         label={"Stock"}

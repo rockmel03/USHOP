@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 export default function Dashboard() {
   return (
-    <main className="w-full min-h-screen flex">
+    <main className="w-full min-h-screen flex bg-[#F6F6F6]">
       <section className="flex-shrink-0 w-3xs h-screen sticky top-0 overflow-y-auto">
         <SideNav />
       </section>
