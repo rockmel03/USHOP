@@ -1,4 +1,3 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 
 const links = [
@@ -11,31 +10,31 @@ const links = [
   {
     name: "users",
     icon: <i className="ri-group-line"></i>,
-    link: "list/users",
-    role: "",
+    link: "admin/users",
+    role: "admin",
   },
   {
     name: "sellers",
     icon: <i className="ri-user-community-line"></i>,
-    link: "list/sellers",
-    role: "",
+    link: "admin/sellers",
+    role: "admin",
   },
   {
     name: "products",
     icon: <i className="ri-list-indefinite"></i>,
-    link: "list/products",
+    link: "products",
     role: "",
   },
   {
     name: "catergories",
     icon: <i className="ri-file-list-3-line"></i>,
-    link: "list/categories",
+    link: "categories",
     role: "",
   },
   {
     name: "orders",
     icon: <i className="ri-box-3-line"></i>,
-    link: "/seller/orders",
+    link: "orders",
     role: "",
   },
 ];
