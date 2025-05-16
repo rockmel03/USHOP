@@ -37,10 +37,6 @@ function ProductsList() {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(products);
-  }, [products]);
-
   return (
     <div className="p-5 bg-white rounded-md w-full h-full">
       <ul className="flex flex-col gap-1">

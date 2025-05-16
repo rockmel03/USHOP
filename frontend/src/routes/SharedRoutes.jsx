@@ -3,6 +3,7 @@ import { useRoutes } from "react-router-dom";
 import Categories from "../pages/dashboard/shared/Categories";
 import Products from "../pages/dashboard/shared/Products";
 import NotFound from "../pages/NotFound";
+import ProductInfo from "../components/ProductInfo/ProductInfo";
 
 function SharedRoutes() {
   const routes = [
@@ -11,6 +12,10 @@ function SharedRoutes() {
       children: [
         { path: "categories", element: <Categories /> },
         { path: "products", element: <Products /> },
+        {
+          path: "products/:productId",
+          element: <ProductInfo />,
+        },
       ],
     },
 

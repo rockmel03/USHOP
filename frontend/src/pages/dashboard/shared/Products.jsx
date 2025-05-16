@@ -34,7 +34,7 @@ function Products() {
     );
 
   return (
-    <section className="relative">
+    <section className="relative px-4">
       <div className="min-h-screen">
         <div className="py-5 flex justify-between items-center">
           <h2 className="text-xl font-semibold">
