@@ -6,7 +6,7 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async (credentials, thunkAPI) => {
     try {
-      const response = await axios.post("/users/register", credentials);
+      const response = await axios.post("/auth/register", credentials);
       const token = response.data?.data?.accessToken;
       let user;
       if (token) {
@@ -28,7 +28,7 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async (credentials, thunkAPI) => {
     try {
-      const response = await axios.post("/users/login", credentials);
+      const response = await axios.post("/auth/login", credentials);
       const token = response.data?.data?.accessToken;
       let user;
       if (token) {
@@ -51,7 +51,7 @@ export const refreshAuthToken = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.post(
-        "/users/refresh",
+        "/auth/refresh",
         {},
         { signal: thunkAPI.signal }
       );

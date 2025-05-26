@@ -4,13 +4,8 @@ import Category from "../models/category.model.js";
 import ApiError from "../utils/ApiError.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 import upload, { handleMulterError } from "../middlewares/multer.middleware.js";
-import {
-  addProduct,
-  deleteProduct,
-  getAllProducts,
-  getProductById,
-  updateProduct,
-} from "../controllers/product.controllers.js";
+import * as productControllers from "../controllers/product.controllers.js";
+import validateRequest from "../middlewares/validateRequest.js";
 
 const router = Router();
 
@@ -23,7 +18,8 @@ router
       query("limit").default(10),
       query("page").default(1),
     ],
-    getAllProducts
+    validateRequest,
+    productControllers.getAllProducts
   )
   .post(
     authMiddleware(["seller", "admin"]),
@@ -49,17 +45,21 @@ router
         }
         return true;
       }),
-      body("price").isFloat({ min: 1 }),
-      body("stock").isInt({ min: 1 }),
+      body("price")
+        .isFloat({ min: 1 })
+        .withMessage("Price must be a positive number"),
+      body("stock").isInt({ min: 1 }).withMessage("Stock cannot be negative"),
     ],
-    addProduct
+    validateRequest,
+    productControllers.addProduct
   );
 
 router
   .route("/:productId")
   .get(
     [param("productId").isMongoId().withMessage("Invalid Product Id")],
-    getProductById
+    validateRequest,
+    productControllers.getProductById
   )
   .put(
     authMiddleware(["seller", "admin"]),
@@ -80,15 +80,19 @@ router
         }
         return true;
       }),
-      body("price").isFloat({ min: 1 }),
-      body("stock").isInt({ min: 1 }),
+      body("price")
+        .isFloat({ min: 1 })
+        .withMessage("Price must be a positive number"),
+      body("stock").isInt({ min: 1 }).withMessage("Stock cannot be negative"),
     ],
-    updateProduct
+    validateRequest,
+    productControllers.updateProduct
   )
   .delete(
     authMiddleware(["seller", "admin"]),
     [param("productId").isMongoId().withMessage("Invalid Product Id")],
-    deleteProduct
+    validateRequest,
+    productControllers.deleteProduct
   );
 
 export default router;

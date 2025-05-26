@@ -1,18 +1,14 @@
 import { Router } from "express";
 import { body, param } from "express-validator";
 import authMiddleware from "../middlewares/auth.middleware.js";
-import {
-  createCategory,
-  deleteCategoryById,
-  getAllCategories,
-  updateCategory,
-} from "../controllers/category.controllers.js";
+import * as categoryControllers from "../controllers/category.controllers.js";
+import validateRequest from "../middlewares/validateRequest.js";
 
 const router = Router();
 
 router
   .route("/")
-  .get(getAllCategories)
+  .get(categoryControllers.getAllCategories)
   .post(
     authMiddleware(["admin"]),
     [
@@ -23,7 +19,8 @@ router
       body("description").optional().isString().isLength({ min: 4, max: 255 }),
       body("isActive").default(true).isBoolean(),
     ],
-    createCategory
+    validateRequest,
+    categoryControllers.createCategory
   );
 
 router
@@ -40,11 +37,13 @@ router
       body("description").optional().isString().isLength({ min: 4, max: 255 }),
       body("isActive").optional().default(true).isBoolean(),
     ],
-    updateCategory
+    validateRequest,
+    categoryControllers.updateCategory
   )
   .delete(
     authMiddleware(["admin"]),
     [param("id").isMongoId().withMessage("Invalid id")],
-    deleteCategoryById
+    validateRequest,
+    categoryControllers.deleteCategoryById
   );
 export default router;

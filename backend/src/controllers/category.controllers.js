@@ -1,23 +1,9 @@
-import Category from "../models/category.model.js";
-import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { validationResult } from "express-validator";
+import * as categoryServices from "../services/category.services.js";
 
 export const createCategory = asyncHandler(async (req, res) => {
-  const result = validationResult(req);
-  if (!result.isEmpty()) throw ApiError.validationError(result.array());
-  const { name, description, isActive } = req.body;
-
-  const alreadyExists = await Category.findOne({ name });
-  if (alreadyExists) throw new ApiError(400, "category already exists");
-
-  const category = await Category.create({
-    name,
-    description,
-    isActive,
-  });
-  if (!category) throw new ApiError(500, "Failed to create category");
+  const category = await categoryServices.addNewCategory(req.body);
 
   return res
     .status(201)
@@ -25,67 +11,18 @@ export const createCategory = asyncHandler(async (req, res) => {
 });
 
 export const getAllCategories = asyncHandler(async (req, res) => {
-  const result = validationResult(req);
-  if (!result.isEmpty()) throw ApiError.validationError(result.array());
-
-  const { limit = 10, page = 1 } = req.query;
-  const categories = await Category.aggregate([
-    {
-      $sort: {
-        createdAt: -1,
-      },
-    },
-    {
-      $skip: Number(limit) * (Number(page) - 1),
-    },
-    {
-      $limit: Number(limit),
-    },
-    {
-      $project: {
-        name: 1,
-        description: 1,
-        isActive: 1,
-      },
-    },
-  ]);
-
-  const totalDocuments = await Category.countDocuments();
-
-  const dataToSend = {
-    categories,
-    limit: Number(limit),
-    currentPage: Number(page),
-    totalDocuments,
-    totalPages: Math.ceil(totalDocuments / Number(limit)),
-  };
+  const dataToSend = await categoryServices.findAllCategories(req.query);
 
   return res
     .status(200)
-    .json(ApiResponse.success(dataToSend, "category fetched successfully"));
+    .json(ApiResponse.success(dataToSend, "categories fetched successfully"));
 });
 
 export const updateCategory = asyncHandler(async (req, res) => {
-  const result = validationResult(req);
-  if (!result.isEmpty()) throw ApiError.validationError(result.array());
-
-  const { id } = req.params;
-  const { name, description, isActive } = req.body;
-
-  const category = await Category.findById(id);
-  if (!category) throw new ApiError(400, "category not found");
-  console.log(req.body);
-
-  const updatedCategory = await Category.findByIdAndUpdate(
-    id,
-    {
-      name,
-      description,
-      isActive,
-    },
-    { new: true }
+  const updatedCategory = await categoryServices.updateCategory(
+    req.params.id,
+    req.body
   );
-  if (!updatedCategory) throw new ApiError(500, "Failed to update category");
 
   return res
     .status(200)
@@ -95,14 +32,7 @@ export const updateCategory = asyncHandler(async (req, res) => {
 });
 
 export const deleteCategoryById = asyncHandler(async (req, res) => {
-  const result = validationResult(req);
-  if (!result.isEmpty()) throw ApiError.validationError(result.array());
-
-  const { id } = req.params;
-
-  const category = await Category.findByIdAndDelete(id);
-  if (!category)
-    throw new ApiError(404, "category not found or already deleted");
+  const category = await categoryServices.deleteCategory(req.params.id);
 
   return res
     .status(200)
