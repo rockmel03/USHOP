@@ -54,12 +54,15 @@ const ListItem = ({ data: product }) => {
               </span>
               <span className="font-semibold"> Info</span>
             </Link>
-            <button className="text-sm px-2 py-1 hover:bg-zinc-100 rounded text-zinc-500 hover:text-zinc-700 cursor-pointer text-start flex flex-nowrap">
+            <Link
+              to={`/dashboard/products/${product._id}/edit`}
+              className="text-sm px-2 py-1 hover:bg-zinc-100 rounded text-zinc-500 hover:text-zinc-700 cursor-pointer text-start flex flex-nowrap"
+            >
               <span className="mr-1">
                 <i className="ri-pencil-fill"></i>
               </span>
               <span className="font-semibold"> Edit</span>
-            </button>
+            </Link>
             <button className="text-sm px-2 py-1 hover:bg-zinc-100 rounded text-red-400 hover:text-red-500 cursor-pointer text-start flex flex-nowrap">
               <span className="mr-1">
                 <i className="ri-delete-bin-5-fill"></i>

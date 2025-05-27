@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function ProductInfo() {
-  const { productId } = useParams();
+  const { id: productId } = useParams();
   const [product, setProduct] = useState(null);
 
   const { value: products } = useSelector((state) => state.products);
@@ -22,7 +22,7 @@ function ProductInfo() {
             Product Details
           </h1>
         </div>
-        <div className="px-4 py-2 w-full h-full flex flex-wrap gap-6 ">
+        <div className="px-4 py-2 w-full h-full flex flex-wrap md:flex-nowrap gap-6 ">
           <div className="flex-shrink-0">
             <img
               src={product.images[0].url}
@@ -31,7 +31,7 @@ function ProductInfo() {
             />
           </div>
           <div className="">
-            <div className="w-lg">
+            <div className="max-w-lg">
               <h1 className="text-3xl font-bold"> {product.name}</h1>
               <p className="text-xl opacity-80 capitalize ">
                 {product.category.name}
@@ -67,9 +67,12 @@ function ProductInfo() {
               </p>
               <br />
               <div className="flex items-center gap-2">
-                <button className="px-4 py-2 text-sm font-semibold rounded bg-blue-500 text-white cursor-pointer">
+                <Link
+                  to={`/dashboard/products/${productId}/edit`}
+                  className="px-4 py-2 text-sm font-semibold rounded bg-blue-500 text-white cursor-pointer"
+                >
                   <span className="">Edit</span>
-                </button>
+                </Link>
                 <button className="px-4 py-2 text-sm font-semibold rounded bg-red-500 text-white cursor-pointer">
                   <span className="">Delete</span>
                 </button>
