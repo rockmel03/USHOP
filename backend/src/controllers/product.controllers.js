@@ -25,7 +25,8 @@ export const getProductById = asyncHandler(async (req, res) => {
 export const addProduct = asyncHandler(async (req, res) => {
   const savedProduct = await productServices.createNewProduct(
     req.body,
-    req.files
+    req.files,
+    req.user
   );
 
   return res
@@ -37,7 +38,6 @@ export const addProduct = asyncHandler(async (req, res) => {
 
 export const updateProduct = asyncHandler(async (req, res) => {
   const { productId } = req.params;
-  
 
   return res
     .status(200)

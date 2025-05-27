@@ -81,9 +81,10 @@ export const findProductById = async (productId) => {
 
 export const createNewProduct = async (
   { name, description, price, category, stock },
-  files
+  files,
+  { _id: userId }
 ) => {
-  if (mediaFiles?.length === 0) throw new ApiError(400, "images are required");
+  if (files?.length === 0) throw new ApiError(400, "images are required");
 
   const product = new Product({
     name,
@@ -92,7 +93,7 @@ export const createNewProduct = async (
     images: [],
     category,
     stock: Number(stock),
-    seller: req.user._id,
+    seller: userId,
   });
 
   for (let i = 0; i < files.length; i++) {
@@ -104,6 +105,7 @@ export const createNewProduct = async (
       });
     }
   }
+
   const savedProduct = await product.save();
   return savedProduct;
 };
