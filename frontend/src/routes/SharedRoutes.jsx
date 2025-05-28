@@ -3,7 +3,7 @@ import { useRoutes } from "react-router-dom";
 import Categories from "../pages/dashboard/shared/Categories";
 import Products from "../pages/dashboard/shared/Products";
 import NotFound from "../pages/NotFound";
-import ProductInfo from "../components/ProductInfo/ProductInfo";
+import ProductInfo from "../features/product/components/ProductInfo/ProductInfo";
 import EditProduct from "../features/product/components/EditProduct";
 import AddProduct from "../features/product/components/AddProduct";
 

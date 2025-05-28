@@ -1,9 +1,18 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Dropdown from "../../../components/Dropdown";
 
 const ListItem = ({ data: product }) => {
   const [showActions, setShowActions] = useState(false);
+
+  const setSearchParams = useSearchParams()[1];
+  const handleDeleteClick = () => {
+    setSearchParams({
+      action: "delete",
+      type: "product",
+      id: product._id,
+    });
+  };
 
   return (
     <div className="grid grid-cols-[1.5fr_1.2fr_1fr_1fr_1fr_0.5fr] items-center">
@@ -63,7 +72,10 @@ const ListItem = ({ data: product }) => {
               </span>
               <span className="font-semibold"> Edit</span>
             </Link>
-            <button className="text-sm px-2 py-1 hover:bg-zinc-100 rounded text-red-400 hover:text-red-500 cursor-pointer text-start flex flex-nowrap">
+            <button
+              onClick={handleDeleteClick}
+              className="text-sm px-2 py-1 hover:bg-zinc-100 rounded text-red-400 hover:text-red-500 cursor-pointer text-start flex flex-nowrap"
+            >
               <span className="mr-1">
                 <i className="ri-delete-bin-5-fill"></i>
               </span>
