@@ -47,9 +47,9 @@ export const getAllProducts = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
   "products/update",
-  async ({ _id, ...data }, thunkApi) => {
+  async ([id, data], thunkApi) => {
     try {
-      const response = await axiosPrivate.put(`/products/${_id}`, data, {
+      const response = await axiosPrivate.put(`/products/${id}`, data, {
         signal: thunkApi.signal,
       });
 

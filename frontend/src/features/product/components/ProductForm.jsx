@@ -20,6 +20,7 @@ const ProductForm = ({
   }));
   const [images, setImages] = useState(existingImages || []);
   const [formData, setFormData] = useState(initialFormData);
+  const [deleteImages, setDeleteImages] = useState([]);
 
   const categories = useSelector((state) => state.categories.value);
 
@@ -32,6 +33,10 @@ const ProductForm = ({
 
   const handleCancel = () => {
     navigate(-1);
+  };
+
+  const handleDeleteExistingImages = (url) => {
+    setDeleteImages((prev) => [...new Set([...prev, url])]);
   };
 
   const submitHandler = (e) => {
@@ -60,17 +65,22 @@ const ProductForm = ({
 
     const data = new FormData();
     Object.keys(formData).forEach((key) => {
+      if (key === "images") return;
       data.append(key, formData[key]);
     });
-    images.forEach((imgFile) => {
-      if (imgFile.type === "new") {
-        data.append("images", imgFile.file);
-      }
-    });
-    // Display the keys
-    for (const key of data.keys()) {
-      console.log(key, data.getAll(key));
+
+    images
+      .filter((imgObj) => imgObj.type === "new")
+      .map((img) => {
+        data.append("images", img.file);
+      });
+
+    if (deleteImages.length > 0) {
+      data.append("deleteImages", deleteImages);
     }
+
+    // Display the keys
+    data.keys().forEach((key) => console.log(key, data.getAll(key)));
 
     handleSubmit(data);
   };
@@ -83,7 +93,11 @@ const ProductForm = ({
           images
         </label>
         <div className="border border-gray-200 rounded-md px-2 py-2 ">
-          <UploadImages images={images} setImages={setImages} />
+          <UploadImages
+            images={images}
+            setImages={setImages}
+            deleteExistingImg={handleDeleteExistingImages}
+          />
         </div>
       </div>
       <div className="flex flex-col">
@@ -157,6 +171,7 @@ const ProductForm = ({
         </label>
         <input
           type="number"
+          step="any" // allows decimals
           id="price"
           className="text-base border border-gray-200 rounded-md px-2 py-1 placeholder:capitalize placeholder:text-gray-400"
           placeholder="price in rupees (₹)"

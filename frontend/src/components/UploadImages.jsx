@@ -1,6 +1,11 @@
 import toast from "react-hot-toast";
 
-const UploadImages = ({ images, setImages, maxImages = 4 }) => {
+const UploadImages = ({
+  images,
+  setImages,
+  maxImages = 4,
+  deleteExistingImg,
+}) => {
   const handleSelectfile = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -15,10 +20,15 @@ const UploadImages = ({ images, setImages, maxImages = 4 }) => {
 
   const handleRemoveImg = (index) => {
     setImages((prev) => {
-      console.log(prev);
-      return prev.filter((_, idx) => index !== idx);
+      return prev.filter((img, idx) => {
+        if (img.type === "existing") {
+          deleteExistingImg?.(img.url);
+        }
+        return index !== idx;
+      });
     });
   };
+
   return (
     <div className="flex gap-2">
       {images.map((img, idx) => {

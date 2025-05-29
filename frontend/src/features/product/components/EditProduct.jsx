@@ -13,14 +13,13 @@ const EditProduct = () => {
   const productData = products.find((item) => item._id === productId);
 
   const handleSubmit = (formData) => {
-    console.log(formData);
     if (formData instanceof FormData) {
-      formData.entries().map(([key, value]) => console.log(key, value));
+      formData.keys().forEach((key) => console.log(key, formData.getAll(key)));
     }
 
     // post request
     const toastId = toast.loading("Loading...");
-    dispatch(updateProduct(formData)).then((action) => {
+    dispatch(updateProduct([productId, formData])).then((action) => {
       toast.dismiss(toastId);
       if (action.error) return toast.error(action.payload);
       if (action.payload?.status) {
