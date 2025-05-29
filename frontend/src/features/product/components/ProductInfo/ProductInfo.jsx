@@ -32,7 +32,7 @@ function ProductInfo() {
           <div className="px-4 py-2 w-full h-full flex flex-wrap md:flex-nowrap gap-6 ">
             <div className="flex-shrink-0">
               <img
-                src={product.images[0].url}
+                src={product.images[0]?.url}
                 alt=""
                 className="w-xs bg-blue-100 rounded-lg overflow-hidden object-contain"
               />

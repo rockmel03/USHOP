@@ -21,7 +21,7 @@ const UploadImages = ({
   const handleRemoveImg = (index) => {
     setImages((prev) => {
       return prev.filter((img, idx) => {
-        if (img.type === "existing") {
+        if (img.type === "existing" && idx === index) {
           deleteExistingImg?.(img.url);
         }
         return index !== idx;
