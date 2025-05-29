@@ -39,6 +39,16 @@ export const addProduct = asyncHandler(async (req, res) => {
 export const updateProduct = asyncHandler(async (req, res) => {
   const { productId } = req.params;
 
+  const images = req.files?.filter((item) => item.fieldname === "images");
+  const data = req.body;
+
+  const updatedProduct = await productServices.updateProduct(
+    productId,
+    req.user,
+    data,
+    images
+  );
+
   return res
     .status(200)
     .json(ApiResponse.success(updatedProduct, "Product updated successfully"));
