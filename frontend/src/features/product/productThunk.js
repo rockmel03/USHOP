@@ -23,9 +23,9 @@ export const addProduct = createAsyncThunk(
 
 export const getAllProducts = createAsyncThunk(
   "products/get",
-  async (data, thunkApi) => {
+  async (query, thunkApi) => {
     const params = new URLSearchParams();
-    Object.entries(data).forEach(([key, value]) => {
+    Object.entries(query).forEach(([key, value]) => {
       params.append(key, value);
     });
 

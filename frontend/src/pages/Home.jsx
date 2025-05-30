@@ -1,3 +1,6 @@
+import ProductCard from "../features/product/components/ProductList/ProductCards/ProductCard";
+import ProductList from "../features/product/components/ProductList/ProductList";
+
 const categories = [
   {
     name: "Fashion & Apparel",
@@ -157,36 +160,7 @@ const Home = () => {
           </div>
         ))}
       </section>
-      <section className="w-full grid grid-cols-10 gap-3 p-5">
-        {[...new Array(10)].map((item, idx) => (
-          <div
-            key={idx}
-            className=" col-span-2 aspect-3/4 rounded-xl shadow-2xl flex flex-col overflow-hidden"
-          >
-            <div className="flex-1 w-full h-[60%]"></div>
-            <div className="px-2 py-2">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-medium capitalize">
-                  {"Product Name"}
-                </h2>
-                <h3 className="px-1 py-0.5 bg-green-500 text-white rounded text-xs font-medium">
-                  <span>⭐</span>
-                  <span> {(Math.random() * 5).toFixed(1)}</span>
-                </h3>
-              </div>
-              <p className="text-base opacity-80 leading-[1.2] my-3">
-                {"Product Desription Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit, laudantium.".slice(
-                  0,
-                  90
-                ) + "..."}
-              </p>
-              <h2 className="text-xl font-medium text-orange-500">
-                ₹ {(Math.random() * 1000).toFixed(2)}
-              </h2>
-            </div>
-          </div>
-        ))}
-      </section>
+      <ProductList />
     </main>
   );
 };

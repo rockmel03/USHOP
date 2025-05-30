@@ -113,10 +113,9 @@ export const createNewProduct = async (
   const validImages = uploadedImages.filter((img) => img !== null);
   product.images.push(...validImages);
 
-  const savedProduct = (await product.save())
-    .populate("category")
-    .populate("seller", ["fullname", "email"]);
-  return savedProduct;
+  await product.save();
+
+  return product;
 };
 
 export const updateProduct = async (
