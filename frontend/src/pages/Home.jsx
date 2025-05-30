@@ -1,53 +1,5 @@
-import ProductCard from "../features/product/components/ProductList/ProductCards/ProductCard";
 import ProductList from "../features/product/components/ProductList/ProductList";
-
-const categories = [
-  {
-    name: "Fashion & Apparel",
-    image:
-      "https://images.pexels.com/photos/31667397/pexels-photo-31667397/free-photo-of-portrait-of-two-stylish-young-adults-indoors.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  },
-  {
-    name: "Electronics",
-    image:
-      "https://images.pexels.com/photos/306763/pexels-photo-306763.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  },
-  {
-    name: "Home & Living",
-    image:
-      "https://images.pexels.com/photos/709767/pexels-photo-709767.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  },
-  {
-    name: "Beauty & personal care",
-    image:
-      "https://images.pexels.com/photos/2866796/pexels-photo-2866796.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  },
-  {
-    name: "Food & Groceries",
-    image:
-      "https://images.pexels.com/photos/9070106/pexels-photo-9070106.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  },
-  {
-    name: "Fitness & Sports",
-    image:
-      "https://images.pexels.com/photos/16686174/pexels-photo-16686174/free-photo-of-table-tennis-rackets-and-ball.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  },
-  {
-    name: "Toys & Games",
-    image:
-      "https://images.pexels.com/photos/163077/mario-yoschi-figures-funny-163077.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    name: "Travel & Outdoors",
-    image:
-      "https://images.pexels.com/photos/8212233/pexels-photo-8212233.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  },
-  {
-    name: "Pets",
-    image:
-      "https://images.pexels.com/photos/1938123/pexels-photo-1938123.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2 ",
-  },
-];
+import CategoryListBar from "../features/category/components/CategoryListBar";
 
 const collageData = [
   {
@@ -104,6 +56,7 @@ const collageData = [
 const Home = () => {
   return (
     <main className="w-full min-h-screen max-w-[1440px] mx-auto overflow-hidden">
+      <CategoryListBar />
       <section className="w-full h-[80vh] grid grid-cols-12 grid-rows-2 gap-4 p-5">
         {collageData.map((item, idx) => {
           const boxPositions = [
@@ -140,25 +93,6 @@ const Home = () => {
             </div>
           );
         })}
-      </section>
-      <section className="flex items-start justify-between gap-2">
-        {categories.map((i, idx) => (
-          <div
-            key={idx}
-            className="flex-shrink-0 w-35 flex flex-col items-center"
-          >
-            <div className="w-full aspect-square bg-zinc-500 overflow-hidden rounded-lg">
-              <img
-                src={i.image}
-                alt={i.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <p className="text-sm text-center font-semibold opacity-50">
-              {i.name}
-            </p>
-          </div>
-        ))}
       </section>
       <ProductList />
     </main>
