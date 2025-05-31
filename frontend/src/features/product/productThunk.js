@@ -2,25 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../config/axios/index";
 import axiosPrivate from "../../config/axios/privateInstance";
 
-export const addProduct = createAsyncThunk(
-  "products/add",
-  async (data, thunkApi) => {
-    try {
-      const response = await axiosPrivate.post("/products/", data, {
-        signal: thunkApi.signal,
-      });
-      if (response.data?.status) {
-        return response.data;
-      }
-    } catch (error) {
-      console.log(error);
-      return thunkApi.rejectWithValue(
-        error.response?.data?.message || "Failed to create product!"
-      );
-    }
-  }
-);
-
 export const getAllProducts = createAsyncThunk(
   "products/get",
   async (query, thunkApi) => {
@@ -40,6 +21,44 @@ export const getAllProducts = createAsyncThunk(
       console.log(error);
       return thunkApi.rejectWithValue(
         error.response?.data?.message || "Failed to fetch products!"
+      );
+    }
+  }
+);
+
+export const getProductById = createAsyncThunk(
+  "product/get-one",
+  async (productId, thunkApi) => {
+    try {
+      const response = await axios.get(`/products/${productId}`, {
+        signal: thunkApi.signal,
+      });
+      if (response.data?.status) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+      return thunkApi.rejectWithValue(
+        error.response?.data?.message || "Failed to get product"
+      );
+    }
+  }
+);
+
+export const addProduct = createAsyncThunk(
+  "products/add",
+  async (data, thunkApi) => {
+    try {
+      const response = await axiosPrivate.post("/products/", data, {
+        signal: thunkApi.signal,
+      });
+      if (response.data?.status) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+      return thunkApi.rejectWithValue(
+        error.response?.data?.message || "Failed to create product!"
       );
     }
   }

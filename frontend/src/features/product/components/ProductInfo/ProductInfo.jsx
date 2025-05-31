@@ -1,14 +1,29 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DeleteProductModal from "../DeleteProductModal";
+import { getProductById } from "../../productThunk";
 
 function ProductInfo() {
   const { id: productId } = useParams();
   const [product, setProduct] = useState(null);
 
   const { value: products } = useSelector((state) => state.products);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+
+  const isAdmin = user?.role === "admin";
+  const userId = user?._id;
+  const sellerId = product?.seller
+    ? typeof product.seller === "string"
+      ? product.seller
+      : typeof product.seller === "object"
+      ? product.seller._id
+      : null
+    : null;
+  const isSeller = userId && sellerId && userId === sellerId;
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleDeleteClick = () => {
     navigate(`?action=delete&type=product&id=${productId}`);
@@ -16,8 +31,20 @@ function ProductInfo() {
 
   useEffect(() => {
     const productData = products.find((item) => item._id === productId);
-    console.log(productData);
     if (productData) return setProduct(productData);
+
+    const abortController = new AbortController();
+    dispatch(
+      getProductById(productId, { signal: abortController.signal })
+    ).then((action) => {
+      if (action.error) return;
+      if (action.payload.status) {
+        setProduct(action.payload.data);
+      }
+    });
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
   return (
@@ -44,19 +71,19 @@ function ProductInfo() {
                   {product.category.name}
                 </p>
                 <p className="text-yellow-500">
-                  <i class="ri-star-fill"></i>
-                  <i class="ri-star-fill"></i>
-                  <i class="ri-star-fill"></i>
-                  <i class="ri-star-fill"></i>
-                  <i class="ri-star-half-fill"></i>
+                  <i className="ri-star-fill"></i>
+                  <i className="ri-star-fill"></i>
+                  <i className="ri-star-fill"></i>
+                  <i className="ri-star-fill"></i>
+                  <i className="ri-star-half-fill"></i>
                 </p>
                 <div className="flex items-end gap-2">
                   <div className="px-3 py-2 rounded bg-green-100 text-green-300 w-fit text-xs font-semibold">
-                    50% off
+                    15% off
                   </div>
                   <h3 className="text-xl font-bold ">
                     <span className="font-normal line-through opacity-50">
-                      ₹{product.price + (product.price * 50) / product.price}
+                      ₹{product.price + (product.price * 15) / product.price}
                     </span>{" "}
                     <span>₹{product.price}</span>
                   </h3>
@@ -73,27 +100,44 @@ function ProductInfo() {
                   adipisicing elit. Minus, soluta!
                 </p>
                 <br />
-                <div className="flex items-center gap-2">
-                  <Link
-                    to={`/dashboard/products/${productId}/edit`}
-                    className="px-4 py-2 text-sm font-semibold rounded bg-blue-500 text-white cursor-pointer"
-                  >
-                    <span className="">Edit</span>
-                  </Link>
-                  <button
-                    onClick={handleDeleteClick}
-                    className="px-4 py-2 text-sm font-semibold rounded bg-red-500 text-white cursor-pointer"
-                  >
-                    <span className="">Delete</span>
-                  </button>
-                </div>
+
+                {isAuthenticated && (isAdmin || isSeller) ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        to={`/dashboard/products/${productId}/edit`}
+                        className="px-4 py-2 text-sm font-semibold rounded bg-blue-500 text-white cursor-pointer"
+                      >
+                        <span className="">Edit</span>
+                      </Link>
+                      <button
+                        onClick={handleDeleteClick}
+                        className="px-4 py-2 text-sm font-semibold rounded bg-red-500 text-white cursor-pointer"
+                      >
+                        <span className="">Delete</span>
+                      </button>
+                    </div>
+                    <DeleteProductModal
+                      onSuccessDelete={() => navigate("/dashboard/products")}
+                    />
+                  </>
+                ) : (
+                  <div>
+                    <button
+                      type="button"
+                      className="inline-flex items-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-yellow-800 focus:outline-none focus:ring-4  focus:ring-yellow-300"
+                    >
+                      <span className="mr-1">
+                        <i className="ri-shopping-cart-2-line ri-lg"></i>
+                      </span>
+                      Add to cart
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </section>
-        <DeleteProductModal
-          onSuccessDelete={() => navigate("/dashboard/products")}
-        />
       </>
     )
   );

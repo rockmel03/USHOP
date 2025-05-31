@@ -3,6 +3,7 @@ import {
   addProduct,
   deleteProduct,
   getAllProducts,
+  getProductById,
   updateProduct,
 } from "./productThunk";
 
@@ -30,6 +31,11 @@ const productSlice = createSlice({
       .addCase(getAllProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(getProductById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.value.push(action.payload.data);
       })
       .addCase(addProduct.fulfilled, (state, action) => {
         state.loading = false;
