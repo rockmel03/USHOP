@@ -1,22 +1,13 @@
-import { useEffect } from "react";
-import { Toaster } from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllCategory } from "./features/category/categoryThunk.js";
+import toast, { Toaster } from "react-hot-toast";
 import AppRoutes from "./routes/AppRoutes.jsx";
+import useInitialData from "./hooks/useInitialData.js";
 
 export default function App() {
-  const { loading, value: categoriesData } = useSelector(
-    (state) => state.categories
-  );
-  const dispatch = useDispatch();
+  const { isLoading, error } = useInitialData();
 
-  useEffect(() => {
-    if (loading || categoriesData.length > 0) return;
-    const loadCategory = dispatch(getAllCategory());
-    return () => {
-      loadCategory.abort();
-    };
-  }, []);
+  if (error) toast.error(error);
+  if (isLoading) return <>Loading data please wait...</>;
+
   return (
     <>
       <Toaster />

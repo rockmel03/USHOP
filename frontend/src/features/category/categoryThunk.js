@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../config/axios/index";
+import axiosPrivate from "../../config/axios/privateInstance";
 
 export const getAllCategory = createAsyncThunk(
   "category/getall",
@@ -7,17 +8,12 @@ export const getAllCategory = createAsyncThunk(
     const searchParams = new URLSearchParams();
     searchParams.append("limit", query?.limit || 10);
     searchParams.append("page", query?.page || 1);
-    const abortController = new AbortController();
+
     try {
       const response = await axios.get(
         "/categories/?" + searchParams.toString(),
-        { signal: abortController.signal }
+        { signal: thunkApi.signal }
       );
-
-      if (thunkApi.signal.aborted) {
-        abortController.abort();
-        return thunkApi.rejectWithValue("Request Aborted");
-      }
 
       if (response.data?.status) {
         return response.data;
@@ -35,10 +31,8 @@ export const addNewCategory = createAsyncThunk(
   "category/add",
   async (data, thunkApi) => {
     try {
-      const response = await axios.post("/categories/", data, {
-        headers: {
-          Authorization: "Bearer " + thunkApi.getState().auth?.token,
-        },
+      const response = await axiosPrivate.post("/categories/", data, {
+        signal: thunkApi.signal,
       });
       return response.data;
     } catch (error) {
@@ -53,10 +47,8 @@ export const updateCategory = createAsyncThunk(
   "category/update",
   async ({ _id, ...restData }, thunkApi) => {
     try {
-      const response = await axios.put(`/categories/${_id}`, restData, {
-        headers: {
-          Authorization: "Bearer " + thunkApi.getState().auth?.token,
-        },
+      const response = await axiosPrivate.put(`/categories/${_id}`, restData, {
+        signal: thunkApi.signal,
       });
       if (response.data?.status) {
         return response.data;
@@ -75,10 +67,8 @@ export const deleteCategory = createAsyncThunk(
   "category/delete",
   async (id, thunkApi) => {
     try {
-      const response = await axios.delete(`/categories/${id}`, {
-        headers: {
-          Authorization: "Bearer " + thunkApi.getState().auth?.token,
-        },
+      const response = await axiosPrivate.delete(`/categories/${id}`, {
+        signal: thunkApi.signal,
       });
       if (response.data?.status) {
         return response.data;

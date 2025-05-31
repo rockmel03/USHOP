@@ -14,13 +14,16 @@ export default function PersistLogin() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isAuthenticated && isLoggedIn && persist) {
-      dispatch(refreshAuthToken()).then(() => {
-        setIsLoading(false);
-      });
-    } else {
+    if (isAuthenticated || !isLoggedIn || !persist) return setIsLoading(false);
+    const refreshReq = dispatch(refreshAuthToken());
+    refreshReq.then(() => {
       setIsLoading(false);
-    }
+    });
+
+    // return () => {
+    //   setIsLoading(true);
+    //   refreshReq.abort();
+    // };
   }, [isAuthenticated, isLoggedIn, persist]);
 
   return isLoading ? <p>loading...</p> : <Outlet />;

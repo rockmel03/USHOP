@@ -4,7 +4,7 @@ import axiosPrivate from "../../config/axios/privateInstance";
 
 export const getAllProducts = createAsyncThunk(
   "products/get",
-  async (query, thunkApi) => {
+  async (query = { limit: 10, page: 1 }, thunkApi) => {
     const params = new URLSearchParams();
     Object.entries(query).forEach(([key, value]) => {
       params.append(key, value);

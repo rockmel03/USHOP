@@ -14,6 +14,7 @@ import SellerRoutes from "./SellerRoutes";
 import SharedRoutes from "./SharedRoutes";
 import Products from "../pages/Products";
 import ProductInfo from "../features/product/components/ProductInfo/ProductInfo";
+import RequireAuth from "../features/auth/components/RequireAuth";
 
 export default function AppRoutes() {
   return (
@@ -28,11 +29,13 @@ export default function AppRoutes() {
           <Route path="products/:id" element={<ProductInfo />} />
         </Route>
 
-        <Route path="dashboard" element={<DashboardLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="admin/*" element={<AdminRoutes />} />
-          <Route path="seller/*" element={<SellerRoutes />} />
-          <Route path="*" element={<SharedRoutes />} />
+        <Route element={<RequireAuth />}>
+          <Route path="dashboard" element={<DashboardLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="admin/*" element={<AdminRoutes />} />
+            <Route path="seller/*" element={<SellerRoutes />} />
+            <Route path="*" element={<SharedRoutes />} />
+          </Route>
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />
