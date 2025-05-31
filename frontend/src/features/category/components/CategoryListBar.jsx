@@ -9,7 +9,6 @@ const CategoryListBar = () => {
   const scrollerRef = useRef(null);
   useEffect(() => {
     const scroller = scrollerRef.current;
-    console.log(scroller);
     if (!scroller) return;
 
     const handleWheel = (e) => {
