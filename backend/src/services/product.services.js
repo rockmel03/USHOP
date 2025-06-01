@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import * as fsPromise from "node:fs/promises";
 import Product from "../models/product.model.js";
 import ApiError from "../utils/ApiError.js";
@@ -8,23 +9,37 @@ import {
 
 export const findAllProducts = async ({
   name,
+  minPrice,
+  maxPrice,
   category,
-  limit = 10,
   page = 1,
+  limit = 10,
+  sortBy = "createdAt",
+  sortOrder = "desc",
 }) => {
   const currentLimit = Number(limit);
   const currentPage = Number(page);
   const skipDocuments = currentLimit * (currentPage - 1);
 
-  const products = await Product.aggregate([
-    {
-      $match: {
-        $or: [
-          name ? { name: { $regex: name, $options: "i" } } : {},
-          category ? { category } : {},
-        ],
-      },
-    },
+  const match = {};
+
+  if (name !== undefined) match.name = { $regex: name, $options: "i" };
+
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    match.price = {};
+    if (minPrice !== undefined) match.price.$gte = Number(minPrice);
+    if (maxPrice !== undefined) match.price.$lte = Number(maxPrice);
+  }
+
+  if (category && mongoose.isValidObjectId(category)) {
+    match.category = new mongoose.Types.ObjectId(category);
+  }
+
+  const sort = {};
+  sort[sortBy] = sortOrder === "asc" ? 1 : -1;
+
+  const pipeline = [
+    { $match: match },
     {
       $lookup: {
         from: "categories",
@@ -61,15 +76,53 @@ export const findAllProducts = async ({
         preserveNullAndEmptyArrays: true,
       },
     },
-    {
-      $skip: skipDocuments,
-    },
-    {
-      $limit: currentLimit,
-    },
-  ]);
+  ];
 
-  const totalDocuments = await Product.countDocuments();
+  if (category && !mongoose.isValidObjectId(category)) {
+    pipeline.push({
+      $match: {
+        "category.name": { $regex: category, $options: "i" },
+      },
+    });
+  }
+
+  pipeline.push(
+    { $sort: sort },
+    { $skip: skipDocuments },
+    { $limit: currentLimit }
+  );
+
+  const products = await Product.aggregate(pipeline);
+
+  // count total Documents
+  let totalDocuments;
+  const countMatch = { ...match };
+  if (category && !mongoose.isValidObjectId(category)) {
+    // Need to count by joining with categories
+    const totalDocumentsCount = await Product.aggregate([
+      { $match: match },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
+      {
+        $match: {
+          "category.name": { $regex: category, $options: "i" },
+        },
+      },
+      { $count: "count" },
+    ]);
+
+    totalDocuments = totalDocumentsCount[0]?.count || 0;
+  } else {
+    totalDocuments = await Product.countDocuments(countMatch);
+  }
+
   return {
     totalPages: Math.ceil(totalDocuments / currentLimit),
     totalDocuments,

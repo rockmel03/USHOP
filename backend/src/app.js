@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import errorHandler from "./utils/errorHandler.js";
 import corsOptions from "./config/corsOptions.js";
 
@@ -16,6 +17,8 @@ app.use(cookieParser());
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "..", "public")));
+
+app.use(morgan("dev"));
 
 // routes import
 import authRouter from "./routes/auth.routes.js";
