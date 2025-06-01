@@ -4,27 +4,31 @@ import { useSearchParams } from "react-router-dom";
 import ProductList from "./ProductList/ProductList";
 import { getAllProducts } from "../productThunk";
 import toast from "react-hot-toast";
+import { setFilters } from "../productSlice";
 
 const ShowProducts = () => {
-  const { value: products, loading } = useSelector((state) => state.products);
+  const {
+    value: products,
+    loading,
+    filters,
+  } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
 
-  const [query, setQuery] = useState({ page: 1, limit: 5, category: "all" });
   const [isAllFetched, setIsAllFetched] = useState(false);
 
   const fetchData = () => {
     const abortController = new AbortController();
-    dispatch(getAllProducts(query, { signal: abortController.signal })).then(
+    dispatch(getAllProducts(filters, { signal: abortController.signal })).then(
       (action) => {
-        if (action.error) return toast.error(action.payload);
+        if (action.error) return action.payload && toast.error(action.payload);
         if (action.payload.status) {
-          const { totalPages } = action.payload.data;
-          if (!totalPages) return;
-          if (totalPages > query.page) {
-            setQuery((prev) => ({ ...prev, page: prev.page + 1 }));
+          const { totalPages, currentPage } = action.payload.data;
+          if (!totalPages || !currentPage) return;
+          if (totalPages > currentPage) {
+            dispatch(setFilters({ page: currentPage + 1 }));
             setIsAllFetched(false);
-          } else if (totalPages === query.page) {
+          } else if (totalPages <= currentPage) {
             setIsAllFetched(true);
           }
         }
@@ -37,17 +41,18 @@ const ShowProducts = () => {
   };
 
   useEffect(() => {
-    if (products.length > 0) return;
+    const category = searchParams.get("category");
+    if (category) {
+      dispatch(setFilters({ category, page: 1 }));
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     const abort = fetchData();
     return () => {
       abort();
     };
-  }, []);
-
-  useEffect(() => {
-    const category = searchParams.get("category");
-    setQuery((prev) => ({ ...prev, category }));
-  }, [searchParams]);
+  }, [filters.category]);
 
   return (
     <div>

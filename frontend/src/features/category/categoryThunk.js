@@ -6,8 +6,9 @@ export const getAllCategory = createAsyncThunk(
   "category/getall",
   async (query, thunkApi) => {
     const searchParams = new URLSearchParams();
-    searchParams.append("limit", query?.limit || 10);
-    searchParams.append("page", query?.page || 1);
+    Object.keys(query).forEach(([key, value]) => {
+      searchParams.append(key, value);
+    });
 
     try {
       const response = await axios.get(

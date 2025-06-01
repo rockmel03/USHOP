@@ -11,22 +11,44 @@ const initialState = {
   value: [],
   loading: false,
   error: null,
+  filters: {
+    minPrice: null,
+    maxPrice: null,
+    category: null,
+    page: 1,
+    limit: 10,
+    sortBy: null,
+    sortOrder: null,
+  },
 };
 
 const productSlice = createSlice({
   initialState,
   name: "products",
-  reducers: {},
+  reducers: {
+    setFilters(state, action) {
+      Object.entries(action.payload).forEach(([key, value]) => {
+        state.filters[key] = value;
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllProducts.pending, (state) => {
+      .addCase(getAllProducts.pending, (state, action) => {
+        console.log(action.meta);
+        const { page } = action.meta.arg;
+        if (page === 1) state.value = [];
+
         state.loading = true;
         state.error = null;
       })
       .addCase(getAllProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.value = [...state.value, ...action.payload.data.products];
+
+        const set = new Set(state.value.map((item) => item._id));
+        const newData = action.payload.data.products;
+        state.value.push(...newData.filter((item) => !set.has(item._id)));
       })
       .addCase(getAllProducts.rejected, (state, action) => {
         state.loading = false;
@@ -61,4 +83,5 @@ const productSlice = createSlice({
   },
 });
 
+export const { setFilters } = productSlice.actions;
 export default productSlice.reducer;
