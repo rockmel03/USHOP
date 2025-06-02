@@ -15,6 +15,7 @@ import SharedRoutes from "./SharedRoutes";
 import Products from "../pages/Products";
 import ProductInfo from "../features/product/components/ProductInfo/ProductInfo";
 import RequireAuth from "../features/auth/components/RequireAuth";
+import Cart from "../pages/cart";
 
 export default function AppRoutes() {
   return (
@@ -27,6 +28,7 @@ export default function AppRoutes() {
           <Route path="/home?" element={<Home />} />
           <Route path="products" element={<Products />} />
           <Route path="products/:id" element={<ProductInfo />} />
+          <Route path="cart" element={<Cart />} />
         </Route>
 
         <Route element={<RequireAuth />}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { DropDownList } from "./DropDownList";
@@ -20,9 +20,12 @@ const Navbar = () => {
         <div className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease">
           <i className="ri-map-pin-2-fill ri-lg"></i>
         </div>
-        <div className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease">
+        <Link
+          to="/cart"
+          className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease"
+        >
           <i className="ri-shopping-cart-2-fill ri-lg"></i>
-        </div>
+        </Link>
         {isAuthenticated ? (
           <div
             onClick={() => setDropDown((prev) => !prev)}

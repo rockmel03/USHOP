@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DeleteProductModal from "../DeleteProductModal";
 import { getProductById } from "../../productThunk";
+import AddToCartButton from "../../../cart/components/AddToCartButton";
 
 function ProductInfo() {
   const { id: productId } = useParams();
@@ -122,17 +123,14 @@ function ProductInfo() {
                     />
                   </>
                 ) : (
-                  <div>
-                    <button
-                      type="button"
-                      className="inline-flex items-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-yellow-800 focus:outline-none focus:ring-4  focus:ring-yellow-300"
-                    >
+                  <AddToCartButton product={product}>
+                    <div className="inline-flex items-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-yellow-800 focus:outline-none focus:ring-4  focus:ring-yellow-300">
                       <span className="mr-1">
                         <i className="ri-shopping-cart-2-line ri-lg"></i>
                       </span>
                       Add to cart
-                    </button>
-                  </div>
+                    </div>
+                  </AddToCartButton>
                 )}
               </div>
             </div>
