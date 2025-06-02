@@ -5,17 +5,15 @@ import ProductList from "./ProductList/ProductList";
 import { getAllProducts } from "../productThunk";
 import toast from "react-hot-toast";
 import { setFilters } from "../productSlice";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Loading from "../../../components/Loading";
 
 const ShowProducts = () => {
-  const {
-    value: products,
-    loading,
-    filters,
-  } = useSelector((state) => state.products);
+  const { value: products, filters } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
 
-  const [isAllFetched, setIsAllFetched] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const fetchData = () => {
     const abortController = new AbortController();
@@ -27,17 +25,15 @@ const ShowProducts = () => {
           if (!totalPages || !currentPage) return;
           if (totalPages > currentPage) {
             dispatch(setFilters({ page: currentPage + 1 }));
-            setIsAllFetched(false);
+            setHasMore(true);
           } else if (totalPages <= currentPage) {
-            setIsAllFetched(true);
+            setHasMore(false);
           }
         }
       }
     );
 
-    return function abort() {
-      abortController.abort();
-    };
+    return abortController;
   };
 
   useEffect(() => {
@@ -48,27 +44,27 @@ const ShowProducts = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    const abort = fetchData();
+    const contoller = fetchData();
     return () => {
-      abort();
+      contoller.abort();
     };
   }, [filters.category]);
 
   return (
     <div>
-      <ProductList data={products} />
-      <div className="w-full text-center">
-        {!isAllFetched && (
-          <button
-            type="button"
-            disabled={loading}
-            onClick={() => fetchData()}
-            className="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 "
-          >
-            {loading ? "Loading..." : "Show more"}
-          </button>
-        )}
-      </div>
+      <InfiniteScroll
+        dataLength={products.length} //This is important field to render the next data
+        next={fetchData}
+        hasMore={hasMore}
+        loader={<Loading />}
+        endMessage={
+          <p className="text-center text-gray-500">
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
+      >
+        <ProductList data={products} />
+      </InfiniteScroll>
     </div>
   );
 };

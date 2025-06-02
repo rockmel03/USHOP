@@ -16,7 +16,7 @@ const initialState = {
     maxPrice: null,
     category: null,
     page: 1,
-    limit: 10,
+    limit: 5,
     sortBy: null,
     sortOrder: null,
   },
@@ -35,7 +35,6 @@ const productSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getAllProducts.pending, (state, action) => {
-        console.log(action.meta);
         const { page } = action.meta.arg;
         if (page === 1) state.value = [];
 
