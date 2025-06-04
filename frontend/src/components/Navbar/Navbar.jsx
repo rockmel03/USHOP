@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { DropDownList } from "./DropDownList";
 import SearchBar from "./SearchBar";
 import { selectCartTotalQuantity } from "../../features/cart/cartSlice";
+import Dropdown from "../Dropdown";
 
 const Navbar = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -12,10 +13,10 @@ const Navbar = () => {
   const [dropDown, setDropDown] = useState(false);
   return (
     <nav className="px-5 py-4 flex items-center justify-between max-w-[1440px] mx-auto">
-      <div>
+      <Link to="/">
         <h1 className="text-xl font-bold">USHOP</h1>
-      </div>
-      <div className="w-full max-w-md">
+      </Link>
+      <div className="w-full max-w-xs lg:max-w-lg">
         <SearchBar />
       </div>
       <div className="flex items-center gap-2">
@@ -35,27 +36,25 @@ const Navbar = () => {
           </div>
         </Link>
         {isAuthenticated ? (
-          <div
+          <button
             onClick={() => setDropDown((prev) => !prev)}
-            className="relative shadow flex items-center rounded-full"
+            className="relative shadow flex items-center rounded-full focus:ring-4 focus:ring-gray-400"
           >
             <div className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease">
               <i className="ri-account-circle-fill ri-lg"></i>
             </div>
-            <p>{user?.fullname?.split(" ")[0] || "Account"}</p>
-            <div className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer transition duration-200 ease">
-              {dropDown ? (
-                <i className="ri-arrow-up-s-line"></i>
-              ) : (
-                <i className="ri-arrow-down-s-line"></i>
-              )}
-            </div>
+            <p className="mr-4">{user?.fullname?.split(" ")[0] || "Account"}</p>
+
             {dropDown && (
-              <div className="absolute top-[101%] right-0 z-10 w-3xs max-w-sm bg-white shadow rounded-lg p-4">
+              <Dropdown
+                showDropdown={dropDown}
+                setShowDropdown={setDropDown}
+                className="absolute top-[110%] right-0 z-10 w-3xs max-w-sm bg-white shadow rounded-lg p-4"
+              >
                 <DropDownList />
-              </div>
+              </Dropdown>
             )}
-          </div>
+          </button>
         ) : (
           <Link to="/login">
             <div className="shadow flex items-center rounded-full">
