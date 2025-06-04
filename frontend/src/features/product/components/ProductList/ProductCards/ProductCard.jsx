@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import AddToCartButton from "../../../../cart/components/AddToCartButton";
 
 const ProductCard = ({ data }) => {
   const rating = Number.parseFloat((Math.random() * 4).toFixed(1)) + 1;
@@ -120,7 +121,8 @@ const ProductCard = ({ data }) => {
             ₹{data.price}
           </p>
 
-          <button
+          <AddToCartButton
+            product={data}
             type="button"
             className="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300"
           >
@@ -128,7 +130,7 @@ const ProductCard = ({ data }) => {
               <i className="ri-shopping-cart-2-line ri-lg"></i>
             </span>
             Add to cart
-          </button>
+          </AddToCartButton>
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ import SharedRoutes from "./SharedRoutes";
 import Products from "../pages/Products";
 import ProductInfo from "../features/product/components/ProductInfo/ProductInfo";
 import RequireAuth from "../features/auth/components/RequireAuth";
-import Cart from "../pages/cart";
+import Cart from "../pages/Cart";
 
 export default function AppRoutes() {
   return (

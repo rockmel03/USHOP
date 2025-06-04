@@ -38,4 +38,4 @@ router.delete("/:itemId", cartController.removeFromCart);
 
 router.delete("/", cartController.clearCart);
 
-module.exports = router;
+export default router

@@ -3,9 +3,11 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { DropDownList } from "./DropDownList";
 import SearchBar from "./SearchBar";
+import { selectCartTotalQuantity } from "../../features/cart/cartSlice";
 
 const Navbar = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const totalCartQuantity = useSelector(selectCartTotalQuantity);
 
   const [dropDown, setDropDown] = useState(false);
   return (
@@ -20,11 +22,17 @@ const Navbar = () => {
         <div className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease">
           <i className="ri-map-pin-2-fill ri-lg"></i>
         </div>
-        <Link
-          to="/cart"
-          className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease"
-        >
-          <i className="ri-shopping-cart-2-fill ri-lg"></i>
+        <Link to="/cart">
+          <div className="relative flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease">
+            <span>
+              <i className="ri-shopping-cart-2-fill ri-lg"></i>
+            </span>
+            {totalCartQuantity > 0 && (
+              <span className=" absolute -top-1 -right-1 w-5 h-5 grid place-items-center bg-red-500 text-white text-xs font-medium rounded-full">
+                {totalCartQuantity > 9 ? "9+" : totalCartQuantity}
+              </span>
+            )}
+          </div>
         </Link>
         {isAuthenticated ? (
           <div

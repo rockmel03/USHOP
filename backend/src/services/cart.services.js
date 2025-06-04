@@ -1,4 +1,4 @@
-import Cart from "../models/cart.model";
+import Cart from "../models/cart.model.js";
 import ApiError from "../utils/ApiError.js";
 
 export const addToCart = async (userId, productId, quantity) => {

@@ -25,7 +25,6 @@ const cartSlice = createSlice({
         } else state.items[index].quantity += quantity;
       } else {
         state.items.push({
-          productId: product._id,
           product,
           quantity,
           addedAt: new Date().toISOString(),
@@ -35,14 +34,14 @@ const cartSlice = createSlice({
 
     removeFromCart(state, action) {
       state.items = state.items.filter(
-        (item) => item.productId !== action.payload
+        (item) => item.product._id !== action.payload
       );
     },
 
     setQuantity(state, action) {
       const { productId, quantity } = action.payload;
       const index = state.items.findIndex(
-        (item) => item.productId === productId
+        (item) => item.product._id === productId
       );
 
       if (index !== -1) {
@@ -62,7 +61,7 @@ const cartSlice = createSlice({
       const productId = action.payload;
 
       const index = state.items.findIndex(
-        (item) => item.productId === productId
+        (item) => item.product._id === productId
       );
       if (index !== -1) {
         const stock = state.items[index].product.stock;
@@ -78,7 +77,7 @@ const cartSlice = createSlice({
       const productId = action.payload;
 
       const index = state.items.findIndex(
-        (item) => item.productId === productId
+        (item) => item.product._id === productId
       );
       if (index !== -1) {
         if (state.items[index].quantity > 1) {
@@ -115,8 +114,8 @@ export const selectCartTotalAmount = (state) =>
   );
 
 export const selectCartDataForServer = (state) =>
-  state.cart.items.map(({ productId, quantity, addedAt }) => ({
-    productId,
+  state.cart.items.map(({ product, quantity, addedAt }) => ({
+    productId: product._id,
     quantity,
     addedAt,
   }));
