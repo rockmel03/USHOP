@@ -1,7 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
+import {
+  addItemToCart,
+  clearCartItems,
+  getCart,
+  removeCartItem,
+  updateCartItem,
+} from "./cartThunk";
 
 const initialState = {
   items: [],
+  loading: false,
+  error: null,
 };
 
 const cartSlice = createSlice({
@@ -89,6 +98,39 @@ const cartSlice = createSlice({
     clearCart(state) {
       state.items = [];
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getCart.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload.status) {
+          state.items = action.payload.data.items;
+        }
+      })
+      .addCase(addItemToCart.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload.status) {
+          state.items = action.payload.data.items;
+        }
+      })
+      .addCase(updateCartItem.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload.status) {
+          state.items = action.payload.data.items;
+        }
+      })
+      .addCase(removeCartItem.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload.status) {
+          state.items = action.payload.data.items;
+        }
+      })
+      .addCase(clearCartItems.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload.status) {
+          state.items = [];
+        }
+      });
   },
 });
 
