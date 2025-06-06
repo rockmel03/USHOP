@@ -165,10 +165,7 @@ function ProductInfo() {
                     Add to favorites
                   </a>
                   {product.stock > 0 && (
-                    <AddToCartButton
-                      product={product}
-                      isAuthenticated={isAuthenticated}
-                    >
+                    <AddToCartButton product={product}>
                       {({ isAdded, isLoading }) => (
                         <div
                           className={`text-white mt-4 sm:mt-0 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none flex items-center justify-center ${

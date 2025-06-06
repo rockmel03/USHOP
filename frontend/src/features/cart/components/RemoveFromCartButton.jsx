@@ -1,16 +1,11 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart } from "../cartSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { removeFromCartAsync } from "../cartThunk";
 
-const RemoveFromCartButton = ({
-  productId,
-  isAuthenticated = false,
-  children,
-  className,
-  ...rest
-}) => {
+const RemoveFromCartButton = ({ productId, children, className, ...rest }) => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [state, setState] = useState({
     isRemoved: false,

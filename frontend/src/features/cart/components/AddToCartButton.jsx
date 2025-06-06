@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../cartSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -7,11 +7,11 @@ import { addToCartAsync } from "../cartThunk";
 const AddToCartButton = ({
   product,
   quantity = 1,
-  isAuthenticated = false,
   children,
   className,
   ...rest
 }) => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [state, setState] = useState({
     isAdded: false,

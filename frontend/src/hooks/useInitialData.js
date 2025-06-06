@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getAllCategory } from "../features/category/categoryThunk";
 import { getAllProducts } from "../features/product/productThunk";
+import { getCartAsync } from "../features/cart/cartThunk";
 
 const useInitialData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -32,6 +34,16 @@ const useInitialData = () => {
       b.abort();
     };
   }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const fetchCartPromise = dispatch(getCartAsync());
+
+    return () => {
+      fetchCartPromise.abort();
+    };
+  }, [isAuthenticated]);
 
   return [isLoading, error];
 };

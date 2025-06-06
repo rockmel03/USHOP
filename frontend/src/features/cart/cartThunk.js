@@ -5,7 +5,9 @@ export const getCartAsync = createAsyncThunk(
   "cart/get-cart",
   async (_, thunkApi) => {
     try {
-      const response = await axiosPrivate.get("/cart");
+      const response = await axiosPrivate.get("/cart", {
+        signal: thunkApi.signal,
+      });
 
       return response.data;
     } catch (error) {

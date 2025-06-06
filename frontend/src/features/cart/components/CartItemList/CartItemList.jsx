@@ -3,17 +3,11 @@ import ListItem from "./ListItem";
 
 export const CartItemList = () => {
   const { items: cartItems } = useSelector((state) => state.cart);
-  const { isAuthenticated } = useSelector((state) => state.auth);
+
   return cartItems?.length > 0 ? (
     <div className="space-y-6">
       {cartItems.map((item) => {
-        return (
-          <ListItem
-            data={item}
-            isAuthenticated={isAuthenticated}
-            key={item.product?._id}
-          />
-        );
+        return <ListItem data={item} key={item.product?._id} />;
       })}
     </div>
   ) : (
