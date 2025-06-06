@@ -121,15 +121,23 @@ const ProductCard = ({ data }) => {
             ₹{data.price}
           </p>
 
-          <AddToCartButton
-            product={data}
-            type="button"
-            className="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300"
-          >
-            <span className="mr-1">
-              <i className="ri-shopping-cart-2-line ri-lg"></i>
-            </span>
-            Add to cart
+          <AddToCartButton product={data} type="button">
+            {(added) => (
+              <div
+                className={`inline-flex items-center rounded-lg px-5 py-2.5 text-sm font-medium text-white focus:outline-none ${
+                  added
+                    ? "bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300"
+                    : "bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300"
+                } `}
+              >
+                {!added && (
+                  <span className="mr-1">
+                    <i className="ri-shopping-cart-2-line ri-lg"></i>
+                  </span>
+                )}
+                {added ? "Added in Cart" : "Add to cart"}{" "}
+              </div>
+            )}
           </AddToCartButton>
         </div>
       </div>

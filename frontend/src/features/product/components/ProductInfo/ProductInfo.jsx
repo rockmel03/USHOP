@@ -166,12 +166,24 @@ function ProductInfo() {
                   </a>
                   {product.stock > 0 && (
                     <AddToCartButton product={product}>
-                      <div className="text-white mt-4 sm:mt-0 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none flex items-center justify-center">
-                        <span className="mr-1">
-                          <i className="ri-shopping-cart-2-line ri-lg"></i>
-                        </span>
-                        Add to cart
-                      </div>
+                      {(added) => (
+                        <div
+                          className={`text-white mt-4 sm:mt-0 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none flex items-center justify-center ${
+                            added
+                              ? "bg-green-700 hover:bg-green-800 focus:ring-4 focus:green-blue-300"
+                              : "bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300"
+                          }`}
+                        >
+                          <span className="mr-1">
+                            {added ? (
+                              <i className="ri-checkbox-circle-fill ri-lg"></i>
+                            ) : (
+                              <i className="ri-shopping-cart-2-line ri-lg"></i>
+                            )}{" "}
+                          </span>
+                          {added ? "Added to cart" : "Add to cart"}
+                        </div>
+                      )}
                     </AddToCartButton>
                   )}
                 </div>
