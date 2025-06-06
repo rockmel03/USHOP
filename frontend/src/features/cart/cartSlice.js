@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
-  addItemToCart,
-  clearCartItems,
-  getCart,
-  removeCartItem,
-  updateCartItem,
+  addToCartAsync,
+  clearCartAsync,
+  getCartAsync,
+  removeFromCartAsync,
+  updateCartItemAsync,
 } from "./cartThunk";
 
 const initialState = {
@@ -66,66 +66,61 @@ const cartSlice = createSlice({
       }
     },
 
-    increaseQuantity(state, action) {
-      const productId = action.payload;
-
-      const index = state.items.findIndex(
-        (item) => item.product._id === productId
-      );
-      if (index !== -1) {
-        const stock = state.items[index].product.stock;
-        const prevQuantity = state.items[index].quantity;
-
-        if (stock && prevQuantity + 1 > stock) {
-          state.items[index].quantity = stock;
-        } else state.items[index].quantity += 1;
-      }
-    },
-
-    decreaseQuantity(state, action) {
-      const productId = action.payload;
-
-      const index = state.items.findIndex(
-        (item) => item.product._id === productId
-      );
-      if (index !== -1) {
-        if (state.items[index].quantity > 1) {
-          state.items[index].quantity -= 1;
-        } else state.items.splice(index, 1);
-      }
-    },
-
     clearCart(state) {
       state.items = [];
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getCart.fulfilled, (state, action) => {
+      .addCase(getCartAsync.fulfilled, (state, action) => {
         state.loading = false;
         if (action.payload.status) {
           state.items = action.payload.data.items;
         }
       })
-      .addCase(addItemToCart.fulfilled, (state, action) => {
+      .addCase(addToCartAsync.fulfilled, (state, action) => {
         state.loading = false;
         if (action.payload.status) {
           state.items = action.payload.data.items;
         }
       })
-      .addCase(updateCartItem.fulfilled, (state, action) => {
+      .addCase(addToCartAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+
+        const { productId, quantity } = action.meta.arg;
+        const index = state.items.findIndex(
+          (item) => item.product._id === productId
+        );
+        if (index !== -1) {
+          // rollback
+          if (state.items[index].quantity > quantity) {
+            state.items[index].quantity -= quantity;
+          } else {
+            state.items.splice(index, 1);
+          }
+        }
+      })
+      .addCase(updateCartItemAsync.fulfilled, (state, action) => {
         state.loading = false;
         if (action.payload.status) {
           state.items = action.payload.data.items;
         }
       })
-      .addCase(removeCartItem.fulfilled, (state, action) => {
+      .addCase(removeFromCartAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(removeFromCartAsync.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload.status) {
+        if (action.payload?.status) {
           state.items = action.payload.data.items;
         }
       })
-      .addCase(clearCartItems.fulfilled, (state, action) => {
+      .addCase(removeFromCartAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(clearCartAsync.fulfilled, (state, action) => {
         state.loading = false;
         if (action.payload.status) {
           state.items = [];
@@ -134,14 +129,8 @@ const cartSlice = createSlice({
   },
 });
 
-export const {
-  addToCart,
-  removeFromCart,
-  setQuantity,
-  increaseQuantity,
-  decreaseQuantity,
-  clearCart,
-} = cartSlice.actions;
+export const { addToCart, removeFromCart, setQuantity, clearCart } =
+  cartSlice.actions;
 
 export default cartSlice.reducer;
 

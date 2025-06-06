@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import AddToCartButton from "../../../../cart/components/AddToCartButton";
 
-const ProductCard = ({ data }) => {
+const ProductCard = ({ data, isAuthenticated }) => {
   const rating = Number.parseFloat((Math.random() * 4).toFixed(1)) + 1;
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-xl">
@@ -121,21 +121,25 @@ const ProductCard = ({ data }) => {
             ₹{data.price}
           </p>
 
-          <AddToCartButton product={data} type="button">
-            {(added) => (
+          <AddToCartButton product={data} isAuthenticated={isAuthenticated}>
+            {({ isAdded, isLoading }) => (
               <div
                 className={`inline-flex items-center rounded-lg px-5 py-2.5 text-sm font-medium text-white focus:outline-none ${
-                  added
+                  isAdded
                     ? "bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300"
                     : "bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300"
                 } `}
               >
-                {!added && (
+                {!isAdded && (
                   <span className="mr-1">
                     <i className="ri-shopping-cart-2-line ri-lg"></i>
                   </span>
                 )}
-                {added ? "Added in Cart" : "Add to cart"}{" "}
+                {isAdded
+                  ? "Added in Cart"
+                  : isLoading
+                  ? "Adding..."
+                  : "Add to cart"}
               </div>
             )}
           </AddToCartButton>

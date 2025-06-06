@@ -1,32 +1,76 @@
 import { useDispatch } from "react-redux";
 import { addToCart } from "../cartSlice";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { addToCartAsync } from "../cartThunk";
 
 const AddToCartButton = ({
   product,
   quantity = 1,
+  isAuthenticated = false,
   children,
   className,
   ...rest
 }) => {
   const dispatch = useDispatch();
-  const [added, setAdded] = useState(false);
+  const [state, setState] = useState({
+    isAdded: false,
+    isLoading: false,
+    error: "",
+  });
 
   const handleAddToCart = () => {
+    setState((prev) => ({ ...prev, isLoading: true }));
     dispatch(addToCart({ product, quantity }));
-    setAdded(true);
 
-    setTimeout(() => setAdded(false), 2000);
+    if (isAuthenticated) {
+      dispatch(addToCartAsync({ productId: product._id, quantity })).then(
+        (action) => {
+          if (action.error) {
+            const errorMsg = action.payload || "Add to Cart Failed";
+            setState((prev) => ({
+              ...prev,
+              isAdded: false,
+              isLoading: false,
+              error: errorMsg,
+            }));
+            return toast.error(errorMsg);
+          }
+          if (action.payload.status) {
+            setState((prev) => ({ ...prev, isAdded: true, isLoading: false }));
+          }
+        }
+      );
+    } else {
+      setState((prev) => ({ ...prev, isAdded: true, isLoading: false }));
+      setTimeout(
+        () => setState({ isAdded: false, isLoading: false, error: "" }),
+        2000
+      );
+    }
   };
+
+  const isDisabled = state.isLoading || state.isAdded;
+  const cursorState = state.isLoading
+    ? "cursor-progress"
+    : state.isAdded
+    ? "cursor-not-allowed"
+    : "cursor-pointer";
+
   return (
-    <button
-      {...rest}
-      disabled={added}
-      onClick={handleAddToCart}
-      className={`cursor-pointer disabled:cursor-default ${className}`}
-    >
-      {typeof children === "function" ? children(added) : children}
-    </button>
+    product?._id && (
+      <button
+        {...rest}
+        title={
+          state.isAdded ? "Already added" : state.isLoading ? "Adding..." : ""
+        }
+        disabled={isDisabled}
+        onClick={handleAddToCart}
+        className={`${cursorState} ${className}`}
+      >
+        {typeof children === "function" ? children(state) : children}
+      </button>
+    )
   );
 };
 

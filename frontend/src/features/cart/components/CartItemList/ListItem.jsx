@@ -1,37 +1,40 @@
 import { useDispatch } from "react-redux";
-import {
-  decreaseQuantity,
-  increaseQuantity,
-  removeFromCart,
-  setQuantity,
-} from "../../cartSlice";
+import { setQuantity } from "../../cartSlice";
 import { Link } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import RemoveFromCartButton from "../RemoveFromCartButton";
 
-const ListItem = ({ data: { product, quantity } }) => {
+const ListItem = ({ data: { product, quantity }, isAuthenticated }) => {
   const dispatch = useDispatch();
-
-  const handleRemoveFromCart = () => {
-    dispatch(removeFromCart(product._id));
-  };
+  const [counter, setCounter] = useState(quantity || 0);
 
   const handleIncreaseQuantity = () => {
-    dispatch(increaseQuantity(product._id));
+    setCounter((prev) => prev + 1);
   };
 
   const handleDecreaseQuantity = () => {
-    dispatch(decreaseQuantity(product._id));
+    setCounter((prev) => (prev <= 0 ? 0 : prev - 1));
   };
 
-  const handleQuantityInputChange = (e) => {
+  const handleCounterInputChange = (e) => {
     const newQuantity = Number(e.target.value);
     if (isNaN(newQuantity)) return;
+    setCounter(newQuantity > 0 ? Number.parseInt(newQuantity) : 0);
+  };
+
+  const saveQuantity = useCallback(() => {
     dispatch(
       setQuantity({
         productId: product._id,
-        quantity: Number.parseInt(newQuantity),
+        quantity: Number.parseInt(counter),
       })
     );
-  };
+  }, [counter, product._id]);
+
+  useEffect(() => {
+    const timeOut = setTimeout(() => saveQuantity(), 1000);
+    return () => clearTimeout(timeOut);
+  }, [saveQuantity]);
 
   return (
     product && (
@@ -62,8 +65,8 @@ const ListItem = ({ data: { product, quantity } }) => {
                 id="counter-input"
                 className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0"
                 placeholder=""
-                onChange={handleQuantityInputChange}
-                value={quantity}
+                onChange={handleCounterInputChange}
+                value={counter}
                 required
               />
               <button
@@ -102,17 +105,19 @@ const ListItem = ({ data: { product, quantity } }) => {
                 </span>
                 Add to Favorites
               </button>
-
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 text-sm font-medium text-red-600 hover:underline"
-                onClick={handleRemoveFromCart}
+              <RemoveFromCartButton
+                productId={product._id}
+                isAuthenticated={isAuthenticated}
               >
-                <span>
-                  <i className="ri-close-line ri-xl"></i>
-                </span>
-                Remove
-              </button>
+                {({ isLoading }) => (
+                  <div className="inline-flex items-center gap-1 text-sm font-medium text-red-600 hover:underline">
+                    <span>
+                      <i className="ri-close-line ri-xl"></i>
+                    </span>
+                    {isLoading ? "Removing..." : "Remove"}
+                  </div>
+                )}
+              </RemoveFromCartButton>
             </div>
           </div>
         </div>

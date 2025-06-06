@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosPrivate from "../../config/axios/privateInstance";
 
-export const getCart = createAsyncThunk(
+export const getCartAsync = createAsyncThunk(
   "cart/get-cart",
   async (_, thunkApi) => {
     try {
@@ -11,13 +11,13 @@ export const getCart = createAsyncThunk(
     } catch (error) {
       console.log(error);
       return thunkApi.rejectWithValue(
-        error.response.message || "Failed to fetch Cart"
+        error.response.data?.message || "Failed to fetch Cart"
       );
     }
   }
 );
 
-export const addItemToCart = createAsyncThunk(
+export const addToCartAsync = createAsyncThunk(
   "cart/add-to-cart",
   async ({ productId, quantity = 1 }, thunkApi) => {
     try {
@@ -30,13 +30,13 @@ export const addItemToCart = createAsyncThunk(
     } catch (error) {
       console.error(error);
       return thunkApi.rejectWithValue(
-        error.response.message || "Failed add to cart"
+        error.response.data?.message || "Failed add to cart"
       );
     }
   }
 );
 
-export const updateCartItem = createAsyncThunk(
+export const updateCartItemAsync = createAsyncThunk(
   "cart/update-item",
   async ({ productId, quantity }, thunkApi) => {
     try {
@@ -47,13 +47,13 @@ export const updateCartItem = createAsyncThunk(
     } catch (error) {
       console.error(error);
       return thunkApi.rejectWithValue(
-        error.response.message || "Failed update cart item"
+        error.response.data?.message || "Failed update cart item"
       );
     }
   }
 );
 
-export const removeCartItem = createAsyncThunk(
+export const removeFromCartAsync = createAsyncThunk(
   "cart/remove-item",
   async ({ productId }, thunkApi) => {
     try {
@@ -63,21 +63,24 @@ export const removeCartItem = createAsyncThunk(
     } catch (error) {
       console.error(error);
       return thunkApi.rejectWithValue(
-        error.response.message || "Failed remove cart item"
+        error.response.data?.message || "Failed to remove item"
       );
     }
   }
 );
 
-export const clearCartItems = createAsyncThunk("cart/clear", async (_, thunkApi) => {
-  try {
-    const response = await axiosPrivate.delete("/cart");
+export const clearCartAsync = createAsyncThunk(
+  "cart/clear",
+  async (_, thunkApi) => {
+    try {
+      const response = await axiosPrivate.delete("/cart");
 
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    return thunkApi.rejectWithValue(
-      error.response.message || "Failed clear cart"
-    );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return thunkApi.rejectWithValue(
+        error.response.data?.message || "Failed clear cart"
+      );
+    }
   }
-});
+);
