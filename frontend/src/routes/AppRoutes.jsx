@@ -16,6 +16,7 @@ import Products from "../pages/Products";
 import ProductInfo from "../features/product/components/ProductInfo/ProductInfo";
 import RequireAuth from "../features/auth/components/RequireAuth";
 import Cart from "../pages/Cart";
+import Checkout from "../pages/Checkout";
 
 export default function AppRoutes() {
   return (
@@ -29,6 +30,7 @@ export default function AppRoutes() {
           <Route path="products" element={<Products />} />
           <Route path="products/:id" element={<ProductInfo />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<Checkout />} />
         </Route>
 
         <Route element={<RequireAuth />}>
