@@ -1,12 +1,18 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setQuantity } from "../../cartSlice";
 import { Link } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import RemoveFromCartButton from "../RemoveFromCartButton";
+import { updateCartItemAsync } from "../../cartThunk";
+import toast from "react-hot-toast";
 
-const ListItem = ({ data: { product, quantity }, isAuthenticated }) => {
+const ListItem = ({ data: { product, quantity } }) => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [counter, setCounter] = useState(quantity || 0);
+
+  const isIcrementDisabled = counter >= product.stock;
+  const isDecrementDisabled = counter <= 1;
 
   const handleIncreaseQuantity = () => {
     setCounter((prev) => prev + 1);
@@ -18,22 +24,57 @@ const ListItem = ({ data: { product, quantity }, isAuthenticated }) => {
 
   const handleCounterInputChange = (e) => {
     const newQuantity = Number(e.target.value);
+
     if (isNaN(newQuantity)) return;
+    if (newQuantity >= product.stock) return setQuantity(product.stock);
+
     setCounter(newQuantity > 0 ? Number.parseInt(newQuantity) : 0);
   };
 
-  const saveQuantity = useCallback(() => {
-    dispatch(
-      setQuantity({
+  const saveQuantity = useCallback(
+    ({ signal }) => {
+      const data = {
         productId: product._id,
-        quantity: Number.parseInt(counter),
-      })
-    );
-  }, [counter, product._id]);
+        quantity: counter,
+      };
 
+      if (isAuthenticated) {
+        dispatch(updateCartItemAsync(data, { signal })).then((action) => {
+          if (action.error)
+            return action.payload && toast.error(action.payload);
+
+          if (action.payload.status) {
+            const toastId = "customIdForSucessToast";
+            toast.dismiss(toastId); /// removed previous success toast to avoid multiple toast messages in ui
+            toast.success("Update Success!", {
+              id: toastId,
+            });
+          }
+        });
+      } else {
+        dispatch(setQuantity(data));
+      }
+    },
+    [counter, product._id, isAuthenticated]
+  );
+
+  const isFirstRender = useRef(true);
   useEffect(() => {
-    const timeOut = setTimeout(() => saveQuantity(), 1000);
-    return () => clearTimeout(timeOut);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    let controller;
+    const timeOut = setTimeout(() => {
+      controller = new AbortController();
+      saveQuantity({ signal: controller.signal });
+    }, 1000);
+
+    return () => {
+      controller?.abort();
+      clearTimeout(timeOut);
+    };
   }, [saveQuantity]);
 
   return (
@@ -53,8 +94,9 @@ const ListItem = ({ data: { product, quantity }, isAuthenticated }) => {
               <button
                 type="button"
                 id="decrement-button"
+                disabled={isDecrementDisabled}
                 onClick={handleDecreaseQuantity}
-                className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
+                className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span>
                   <i className="ri-subtract-line"></i>
@@ -72,8 +114,9 @@ const ListItem = ({ data: { product, quantity }, isAuthenticated }) => {
               <button
                 type="button"
                 id="increment-button"
+                disabled={isIcrementDisabled}
                 onClick={handleIncreaseQuantity}
-                className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
+                className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span>
                   <i className="ri-add-line"></i>
@@ -82,7 +125,7 @@ const ListItem = ({ data: { product, quantity }, isAuthenticated }) => {
             </div>
             <div className="text-end md:order-4 md:w-32">
               <p className="text-base font-bold text-gray-900">
-                ${product.price}
+                ₹{product.price}
               </p>
             </div>
           </div>
@@ -105,10 +148,7 @@ const ListItem = ({ data: { product, quantity }, isAuthenticated }) => {
                 </span>
                 Add to Favorites
               </button>
-              <RemoveFromCartButton
-                productId={product._id}
-                isAuthenticated={isAuthenticated}
-              >
+              <RemoveFromCartButton productId={product._id}>
                 {({ isLoading }) => (
                   <div className="inline-flex items-center gap-1 text-sm font-medium text-red-600 hover:underline">
                     <span>

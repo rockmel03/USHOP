@@ -42,9 +42,13 @@ export const updateCartItemAsync = createAsyncThunk(
   "cart/update-item",
   async ({ productId, quantity }, thunkApi) => {
     try {
-      const response = await axiosPrivate.put(`/cart/${productId}`, {
-        quantity,
-      });
+      const response = await axiosPrivate.put(
+        `/cart/${productId}`,
+        {
+          quantity,
+        },
+        { signal: thunkApi.signal }
+      );
       return response.data;
     } catch (error) {
       console.error(error);

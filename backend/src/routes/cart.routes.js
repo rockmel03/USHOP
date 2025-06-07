@@ -27,7 +27,7 @@ router.put(
   "/:itemId",
   [
     body("quantity")
-      .isInt({ min: 1 })
+      .isInt()
       .withMessage("Quantity must be at least 1"),
   ],
   validateRequest,

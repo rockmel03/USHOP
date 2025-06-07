@@ -17,7 +17,8 @@ export const addToCart = asyncHandler(async (req, res) => {
 
 export const updateCartItem = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  const { productId, quantity } = req.body;
+  const { itemId: productId } = req.params;
+  const { quantity } = req.body;
   const cart = await CartServices.updateCartItem(userId, productId, quantity);
   res.json(ApiResponse.success(cart, "Updated cart item"));
 });

@@ -36,15 +36,18 @@ const Navbar = () => {
           </div>
         </Link>
         {isAuthenticated ? (
-          <button
-            onClick={() => setDropDown((prev) => !prev)}
-            className="relative shadow flex items-center rounded-full focus:ring-4 focus:ring-gray-400"
-          >
-            <div className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease">
-              <i className="ri-account-circle-fill ri-lg"></i>
-            </div>
-            <p className="mr-4">{user?.fullname?.split(" ")[0] || "Account"}</p>
-
+          <div className="relative">
+            <button
+              onClick={() => setDropDown((prev) => !prev)}
+              className="shadow flex items-center rounded-full focus:ring-4 focus:ring-gray-400"
+            >
+              <div className="flex-shrink-0 w-10 h-10 text-zinc-500 grid place-items-center rounded-full cursor-pointer hover:shadow-lg transition duration-200 ease">
+                <i className="ri-account-circle-fill ri-lg"></i>
+              </div>
+              <p className="mr-4">
+                {user?.fullname?.split(" ")[0] || "Account"}
+              </p>
+            </button>
             {dropDown && (
               <Dropdown
                 showDropdown={dropDown}
@@ -54,7 +57,7 @@ const Navbar = () => {
                 <DropDownList />
               </Dropdown>
             )}
-          </button>
+          </div>
         ) : (
           <Link to="/login">
             <div className="shadow flex items-center rounded-full">

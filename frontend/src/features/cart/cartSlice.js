@@ -107,6 +107,20 @@ const cartSlice = createSlice({
           state.items = action.payload.data.items;
         }
       })
+      .addCase(updateCartItemAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        const { productId, quantity } = action.meta.arg;
+        const index = state.items.findIndex((i) => i.product._id === productId);
+
+        if (index !== -1) {
+          if (state.items[index].quantity > quantity) {
+            state.items[index].quantity -= quantity;
+          } else {
+            state.items[index].quantity += quantity;
+          }
+        }
+      })
       .addCase(removeFromCartAsync.pending, (state) => {
         state.loading = true;
       })
