@@ -5,7 +5,7 @@ import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/profile").get(authMiddleware(), userControllers.getUserProfile);
+router.route("/me").get(authMiddleware(), userControllers.getUserProfile);
 router
   .route("/")
   .get(

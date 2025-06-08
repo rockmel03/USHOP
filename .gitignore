@@ -5,7 +5,8 @@
 .env.production
 node_modules/
 client/node_modules/
-public/
+public/temp/*
+public/uploads/*
 build/
 coverage/
 dist/
