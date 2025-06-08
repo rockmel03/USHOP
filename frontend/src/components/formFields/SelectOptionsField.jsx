@@ -17,7 +17,7 @@ const SelectOptionsField = ({
 
   return (
     <div>
-      <div className="mb-2 flex items-center gap-2">
+      <div className="mb-2">
         <Label {...labelProps} label={label} htmlFor={__id} />
       </div>
 
@@ -38,7 +38,7 @@ const SelectOptionsField = ({
         </select>
       ) : (
         <div
-          className={`block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 ${className}`}
+          className={`block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 ${className}`}
         >
           {value || "N/A"}
         </div>

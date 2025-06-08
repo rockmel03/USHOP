@@ -9,7 +9,7 @@ const InputField = ({
   value,
   onChange,
   type = "text",
-  editable = false,
+  editable = true,
   ...rest
 }) => {
   let __id = useId();

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import AddressForm from "../../../../components/AddressForm/AddressForm";
 import OrderSummary from "../../../cart/components/OrderSummary";
 import PaymentOptionsRadio from "./PaymentOptionsRadio";
+import InputField from "../../../../components/formFields/InputField";
 
 const CheckoutForm = () => {
   return (
@@ -15,6 +16,20 @@ const CheckoutForm = () => {
             Delivery Details
           </h2>
           <div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
+              <InputField
+                label={"Your Name*"}
+                type="text"
+                placeholder="Jhone Doe"
+                required
+              />
+              <InputField
+                label={"Phone Number*"}
+                type="text"
+                placeholder="123-456-7990"
+                required
+              />
+            </div>
             <AddressForm />
             <div className="my-4">
               <button

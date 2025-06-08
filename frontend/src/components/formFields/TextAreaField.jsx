@@ -30,7 +30,7 @@ const TextAreaField = ({
         ></textarea>
       ) : (
         <div
-          className={`block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue500 focus:ring-blue-500 ${className}`}
+          className={`block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue500 focus:ring-blue-500 ${className}`}
         >
           {value || "N/A"}
         </div>

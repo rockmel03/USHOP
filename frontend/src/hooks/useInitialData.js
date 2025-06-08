@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllCategory } from "../features/category/categoryThunk";
 import { getAllProducts } from "../features/product/productThunk";
 import { getCartAsync } from "../features/cart/cartThunk";
+import { getProfile } from "../features/user/userThunk";
 
 const useInitialData = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -38,9 +39,11 @@ const useInitialData = () => {
   useEffect(() => {
     if (!isAuthenticated) return;
 
+    const fetchUserProfile = dispatch(getProfile());
     const fetchCartPromise = dispatch(getCartAsync());
 
     return () => {
+      fetchUserProfile.abort();
       fetchCartPromise.abort();
     };
   }, [isAuthenticated]);
