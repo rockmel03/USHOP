@@ -9,7 +9,7 @@ const OrderSummary = () => {
   const deliveryCharges = totalAmount > 500 ? 0 : 500;
   const tax = (totalAmount * 18) / 100;
 
-  const netTotalAmount = totalQuantity + deliveryCharges + tax - totalSaving;
+  const netTotalAmount = totalAmount + deliveryCharges + tax - totalSaving;
 
   return (
     <div className="space-y-4">

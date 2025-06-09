@@ -5,7 +5,6 @@ import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/me").get(authMiddleware(), userControllers.getUserProfile);
 router
   .route("/")
   .get(
@@ -22,5 +21,7 @@ router
     ],
     userControllers.getAllUsers
   );
+
+router.route("/me").get(authMiddleware(), userControllers.getUserProfile);
 
 export default router;
