@@ -3,13 +3,12 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfile } from "../userThunk";
 import Loading from "../../../components/Loading";
-import ProfileDetailsForm from "./ProfileDetailsForm";
-import AddressDetailsFrom from "./AddressDetailsForm";
+import PersonalDetails from "./PersonalDetails";
+import AddressDetails from "./AddressDetails";
 
 const ProfileDetails = () => {
   const { profile, loading, error } = useSelector((state) => state.user);
   const { isAuthenticated } = useSelector((state) => state.auth);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -39,6 +38,7 @@ const ProfileDetails = () => {
       </div>
     );
   }
+
   return (
     <div>
       <div className="w-full flex items-center justify-between gap-1">
@@ -72,10 +72,9 @@ const ProfileDetails = () => {
       <hr className="my-6 border-gray-300" />
 
       <div className="">
-        <ProfileDetailsForm />
+        <PersonalDetails data={profile} />
         <hr className="my-6 border-gray-300" />
-        <AddressDetailsFrom />
-        <hr className="my-6 border-gray-300" />
+        <AddressDetails address={profile.address} />
       </div>
     </div>
   );
