@@ -17,3 +17,20 @@ export const getProfile = createAsyncThunk(
     }
   }
 );
+
+export const saveAddressAsync = createAsyncThunk(
+  "user/saveAddress",
+  async function (data, thunkApi) {
+    try {
+      const response = await axiosPrivate.post("/users/address", data, {
+        signal: thunkApi.signal,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return thunkApi.rejectWithValue(
+        error.response?.data?.message || "Failed to save address"
+      );
+    }
+  }
+);

@@ -9,6 +9,7 @@ const AddressForm = ({
     city: "",
     zipCode: "",
   },
+  submitHandler,
 }) => {
   const [formData, setFormData] = useState(initialData);
 
@@ -22,10 +23,10 @@ const AddressForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     console.log("saving address.. ", formData);
+    submitHandler?.(formData);
   };
-  
+
   useEffect(() => {
     console.log(formData);
   }, [formData]);

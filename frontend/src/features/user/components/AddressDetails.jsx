@@ -1,18 +1,23 @@
 import { useState } from "react";
 import Modal from "../../../components/Modal";
 import AddressForm from "./AddressForm";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { saveAddressAsync } from "../userThunk";
 
 const AddressDetails = () => {
-  const {
-    profile: { address },
-  } = useSelector((state) => state.user);
+  const { profile } = useSelector((state) => state.user);
+  const address = profile.address;
+
+  const dispatch = useDispatch();
 
   const [showAddressModal, setShowAddressModal] = useState(false);
 
   const handleAddClick = () => setShowAddressModal(true);
   const handleEditClick = () => setShowAddressModal(true);
 
+  const handleSaveAddress = (data) => {
+    dispatch(saveAddressAsync(data));
+  };
   return (
     <>
       <div>
@@ -44,10 +49,10 @@ const AddressDetails = () => {
         <br />
         {address ? (
           <div className="">
-            <p className="font-semibold">{fullname}</p>
-            <p>
+            <p className="font-semibold">{profile.fullname}</p>
+            <div>
               <pre className="font-sans">{address.address}</pre>
-            </p>
+            </div>
             <p>
               {address.city}, {address.state} {address.zipCode}
             </p>
@@ -78,7 +83,10 @@ const AddressDetails = () => {
         hideModal={() => setShowAddressModal(false)}
       >
         <div className="bg-white p-5 rounded w-xs sm:w-sm md:w-md">
-          <AddressForm initialData={address} />
+          <AddressForm
+            initialData={address}
+            submitHandler={handleSaveAddress}
+          />
         </div>
       </Modal>
     </>

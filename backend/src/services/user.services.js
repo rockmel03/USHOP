@@ -55,16 +55,17 @@ export const userProfile = async (userId) => {
 
 export const addNewAddress = async (
   userId,
-  { address, country, state, zipCode }
+  { address, country, state, city, zipCode }
 ) => {
   if (!userId) throw new ApiError(403, "Invalid UserId");
-  const user = User.findById(userId);
+  const user = await User.findById(userId);
   if (!user) throw new ApiError(404, "user not found");
 
   user.address = {
     address,
     country,
     state,
+    city,
     zipCode,
   };
 

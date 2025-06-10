@@ -49,6 +49,13 @@ const AddressFields = ({
   };
 
   useEffect(() => {
+    if (country) {
+      loadStates(country);
+      state && loadCities(country, state);
+    }
+  }, [country, state]);
+
+  useEffect(() => {
     getChanges?.(fieldsData);
   }, [fieldsData]);
 
