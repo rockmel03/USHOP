@@ -1,14 +1,65 @@
 import { Link } from "react-router-dom";
-import AddressForm from "../../../../components/AddressForm/AddressForm";
 import OrderSummary from "../../../cart/components/OrderSummary";
 import PaymentOptionsRadio from "./PaymentOptionsRadio";
 import InputField from "../../../../components/formFields/InputField";
+import AddressFields from "../../../user/components/AddressFields";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 const CheckoutForm = () => {
+  const { profile } = useSelector((state) => state.user);
+
+  const [formData, setFormData] = useState({
+    fullname: "",
+    phoneNumber: "",
+    paymentMethod: "",
+    address: {
+      address: "",
+      country: "",
+      state: "",
+      city: "",
+      zipCode: "",
+    },
+  });
+
+  const handleInputChanges = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const getAddressChanges = (address) => {
+    setFormData((prev) => ({ ...prev, address }));
+  };
+
+  const handleRadioChange = (e) => {
+    const { name, value, checked } = e.target;
+    if (checked && name === "paymentMethod") {
+      setFormData((prev) => ({ ...prev, paymentMethod: value }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
+  };
+
+  useEffect(() => {
+    if (profile) {
+      const { fullname, phoneNumber, address } = profile;
+      setFormData((prev) => {
+        const data = { ...prev };
+        if (fullname) data.fullname = fullname;
+        if (phoneNumber) data.phoneNumber = fullname;
+        if (address) data.address = address;
+        return data;
+      });
+    }
+  }, [profile]);
+
   return (
     <form
-      action="#"
       className="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16"
+      onSubmit={handleSubmit}
     >
       <div className="min-w-0 flex-1 space-y-8">
         <div className="space-y-4">
@@ -18,30 +69,30 @@ const CheckoutForm = () => {
           <div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
               <InputField
-                label={"Your Name*"}
+                label={"Your Name"}
                 type="text"
-                placeholder="Jhone Doe"
+                placeholder="Enter your name"
+                name="fullname"
+                value={formData.fullname}
+                onChange={handleInputChanges}
                 required
               />
               <InputField
-                label={"Phone Number*"}
+                label={"Phone Number"}
                 type="text"
                 placeholder="123-456-7990"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleInputChanges}
                 required
               />
             </div>
-            <AddressForm />
-            <div className="my-4">
-              <button
-                type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100"
-              >
-                <span>
-                  <i className="ri-add-line ri-lg"></i>
-                </span>
-                Add new address
-              </button>
-            </div>
+            <AddressFields
+              initialData={
+                profile?.address ? profile.address : formData.address
+              }
+              getChanges={getAddressChanges}
+            />
           </div>
         </div>
 
@@ -49,7 +100,7 @@ const CheckoutForm = () => {
           <h3 className="text-xl font-semibold text-gray-900">Payment</h3>
 
           <div>
-            <PaymentOptionsRadio />
+            <PaymentOptionsRadio handleChange={handleRadioChange} />
           </div>
         </div>
 

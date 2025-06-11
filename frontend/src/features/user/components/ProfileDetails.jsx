@@ -26,7 +26,6 @@ const ProfileDetails = () => {
     return (
       <div className="mx-auto max-w-screen-xl min-h-[50vh] grid place-items-center">
         <Loading />
-        <p>404 Data not found</p>
       </div>
     );
   }
@@ -71,11 +70,10 @@ const ProfileDetails = () => {
 
       <hr className="my-6 border-gray-300" />
 
-      <div className="">
-        <PersonalDetails data={profile} />
-        <hr className="my-6 border-gray-300" />
-        <AddressDetails address={profile.address} />
-      </div>
+      <PersonalDetails data={profile} />
+      <hr className="my-6 border-gray-300" />
+      <AddressDetails address={profile.address} />
+      <hr className="my-6 border-gray-300" />
     </div>
   );
 };

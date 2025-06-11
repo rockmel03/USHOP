@@ -1,11 +1,12 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import Modal from "../../../components/Modal";
 import AddressForm from "./AddressForm";
 import { useDispatch, useSelector } from "react-redux";
 import { saveAddressAsync } from "../userThunk";
 
 const AddressDetails = () => {
-  const { profile } = useSelector((state) => state.user);
+  const { profile, loading } = useSelector((state) => state.user);
   const address = profile.address;
 
   const dispatch = useDispatch();
@@ -16,7 +17,16 @@ const AddressDetails = () => {
   const handleEditClick = () => setShowAddressModal(true);
 
   const handleSaveAddress = (data) => {
-    dispatch(saveAddressAsync(data));
+    const toastId = toast.loading("Saving...");
+    dispatch(saveAddressAsync(data)).then((action) => {
+      toast.dismiss(toastId);
+      if (action.error) return action.payload && toast.error(action.payload);
+      if (action.payload.status) {
+        toast.success("Address Saved");
+
+        setShowAddressModal(false);
+      }
+    });
   };
   return (
     <>
@@ -49,7 +59,7 @@ const AddressDetails = () => {
         <br />
         {address ? (
           <div className="">
-            <p className="font-semibold">{profile.fullname}</p>
+            <p className="font-semibold capitalize">{profile.fullname}</p>
             <div>
               <pre className="font-sans">{address.address}</pre>
             </div>
@@ -86,6 +96,7 @@ const AddressDetails = () => {
           <AddressForm
             initialData={address}
             submitHandler={handleSaveAddress}
+            isLoading={loading}
           />
         </div>
       </Modal>

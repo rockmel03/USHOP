@@ -1,24 +1,25 @@
-const PaymentOptionsRadio = () => {
+const PaymentOptionsRadio = ({ handleChange }) => {
   const paymentMethods = [
     {
-      name: "credit_card",
       id: "credit-card",
+      value: "credit_card",
       title: "Credit Card",
       description: "Pay with your credit card",
     },
     {
-      name: "debit_card",
       id: "debit-card",
+      value: "debit_card",
       title: "Debit Card",
       description: "Pay with your debit card",
     },
     {
-      name: "upi",
       id: "upi",
+      value: "upi",
       title: "UPI",
       description: "Pay with your UPI",
     },
   ];
+
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
       {paymentMethods.map((item) => {
@@ -34,8 +35,9 @@ const PaymentOptionsRadio = () => {
                   id={item.id}
                   aria-describedby="pay-on-delivery-text"
                   type="radio"
-                  name="payment-method"
-                  value=""
+                  name="paymentMethod"
+                  value={item.value}
+                  onChange={handleChange}
                   className="h-5 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600"
                   required
                 />

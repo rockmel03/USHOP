@@ -10,6 +10,7 @@ const AddressForm = ({
     zipCode: "",
   },
   submitHandler,
+  isLoading,
 }) => {
   const [formData, setFormData] = useState(initialData);
 
@@ -47,8 +48,8 @@ const AddressForm = ({
             Cancel
           </div>
         </button>
-        <button type="Submit">
-          <div className="pl-2 pr-3 py-1.5 rounded-full text-sm text-white font-semibold bg-gray-600 hover:bg-blue-700 cursor-pointer focus:ring-4 focus:ring-blue-400">
+        <button type="Submit" disabled={isLoading}>
+          <div className="pl-2 pr-3 py-1.5 rounded-full text-sm text-white font-semibold bg-gray-600 hover:bg-blue-700 cursor-pointer focus:ring-4 focus:ring-blue-400 disabled:cursor-not-allowed disabled:opacity-60 ">
             <span className="mr-0.5">
               <i className="ri-save-line"></i>
             </span>
