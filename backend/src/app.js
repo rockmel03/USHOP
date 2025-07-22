@@ -27,6 +27,8 @@ import categoryRouter from "./routes/category.routes.js";
 import productRouter from "./routes/product.routes.js";
 import cartRouter from "./routes/cart.routes.js";
 import locationRouter from "./routes/location.routes.js";
+import orderRotes from "./routes/order.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
 
 // routes
 app.get("/", (req, res) => {
@@ -39,6 +41,8 @@ app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/locations", locationRouter);
+app.use("/api/v1/order", orderRotes);
+app.use("/api/v1/payment", paymentRoutes);
 
 // default error handler
 app.use(errorHandler);

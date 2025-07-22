@@ -31,13 +31,6 @@ const paymentSchema = new Schema(
       unique: true,
       sparse: true,
     },
-    paymentDetails: {
-      // Store encrypted payment details
-      cardNumber: String,
-      cardHolderName: String,
-      expiryDate: String,
-      cvv: String,
-    },
   },
   {
     timestamps: true,
