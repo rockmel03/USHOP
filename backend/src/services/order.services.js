@@ -26,7 +26,6 @@ export const createOrder = async ({
 
   const totalAmount = items.reduce((acc, curr) => (acc += curr.price), 0);
 
-  try {
     // create order
     const order = new Order({
       user: userId,
@@ -45,8 +44,5 @@ export const createOrder = async ({
 
     order.payment = payment._id;
     return await order.save();
-  } catch (error) {
-    console.error(error);
-    throw new ApiError(500, "Failed to create Order");
-  }
+ 
 };

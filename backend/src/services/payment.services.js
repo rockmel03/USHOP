@@ -1,11 +1,22 @@
 import Razorpay from "razorpay";
 import Payment from "../models/payment.model.js";
-import ApiError from "../utils/ApiError.js";
 
-const instance = new Razorpay({
+const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_SECRET,
 });
+
+export const createRazorpayOrder = async ({ amount, currency = "INR" }) => {
+  const options = {
+    amount: amount * 100, // amount in paise
+    currency,
+    receipt: "receipt_order_" + Date.now(),
+  };
+
+  const order = await razorpay.orders.create(options);
+
+  return order;
+};
 
 export const createPayment = async ({
   userId,
@@ -13,19 +24,14 @@ export const createPayment = async ({
   amount,
   paymentMethod,
 }) => {
-  try {
-    const payment = await Payment.create({
-      order: orderId,
-      user: userId,
-      amount,
-      paymentMethod,
-    });
+  const payment = await Payment.create({
+    order: orderId,
+    user: userId,
+    amount,
+    paymentMethod,
+  });
 
-    return payment;
-  } catch (error) {
-    console.error(error);
-    throw new ApiError(500, "failed to create payment");
-  }
+  return payment;
 };
 
 export const verifyPayment = async ({
