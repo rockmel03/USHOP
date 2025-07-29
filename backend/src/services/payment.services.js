@@ -1,5 +1,6 @@
 import Razorpay from "razorpay";
 import Payment from "../models/payment.model.js";
+import crypto from "crypto";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -23,12 +24,16 @@ export const createPayment = async ({
   orderId,
   amount,
   paymentMethod,
+  transactionId,
+  status = "pending",
 }) => {
   const payment = await Payment.create({
     order: orderId,
     user: userId,
     amount,
     paymentMethod,
+    transactionId,
+    status,
   });
 
   return payment;

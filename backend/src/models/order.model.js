@@ -29,6 +29,14 @@ const orderSchema = new Schema(
       type: Number,
       required: true,
     },
+    fullname: {
+      type: String,
+      required: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+    },
     shippingAddress: {
       address: String,
       city: String,

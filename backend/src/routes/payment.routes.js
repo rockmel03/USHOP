@@ -9,26 +9,29 @@ import {
 
 const router = Router();
 
-router.use(authMiddleware);
+router.use(authMiddleware());
 
-router.route(
-  "/create-order",
-  [
-    body("amount").isNumeric(),
-    body("currency").default("INR"),
-    validateRequest,
-  ],
-  createPaymentOrder
-);
-router.route(
-  "/verify",
-  [
-    body("razorpay_order_id ").isString(),
-    body("razorpay_payment_id").isString(),
-    body("razorpay_signature").isString(),
-    validateRequest,
-  ],
-  verifyPayment
-);
+router
+  .route("/create-order")
+  .post(
+    [
+      body("amount").isNumeric(),
+      body("currency").default("INR"),
+      validateRequest,
+    ],
+    createPaymentOrder
+  );
+
+router
+  .route("/verify")
+  .post(
+    [
+      body("razorpay_order_id").isString(),
+      body("razorpay_payment_id").isString(),
+      body("razorpay_signature").isString(),
+      validateRequest,
+    ],
+    verifyPayment
+  );
 
 export default router;

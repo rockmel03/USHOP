@@ -2,12 +2,12 @@ import Order from "../models/order.model.js";
 import ApiError from "../utils/ApiError.js";
 import { getCart } from "./cart.services.js";
 import mongoose from "mongoose";
-import { createPayment } from "./payment.services.js";
 
 export const createOrder = async ({
   userId,
   shippingAddress,
-  paymentMethod,
+  fullname,
+  phoneNumber,
 }) => {
   if (!mongoose.isValidObjectId(userId)) throw new Error("Invalid userId");
 
@@ -26,23 +26,25 @@ export const createOrder = async ({
 
   const totalAmount = items.reduce((acc, curr) => (acc += curr.price), 0);
 
-    // create order
-    const order = new Order({
-      user: userId,
-      items,
-      totalAmount,
-      shippingAddress,
-    });
+  // create order
+  const order = new Order({
+    user: userId,
+    items,
+    totalAmount,
+    shippingAddress,
+    fullname,
+    phoneNumber,
+  });
 
-    // create payment
-    const payment = await createPayment({
-      orderId: order._id,
-      userId,
-      amount: totalAmount,
-      paymentMethod,
-    });
+  return await order.save();
+};
 
-    order.payment = payment._id;
-    return await order.save();
- 
+export const getOrderById = async (orderId) => {
+  if (!mongoose.isValidObjectId(orderId)) throw new Error("Invalid orderId");
+
+  const order = await Order.findById(orderId).populate("user");
+
+  if (!order) throw new ApiError(404, "Order not found");
+
+  return order;
 };
