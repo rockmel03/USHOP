@@ -5,8 +5,10 @@ import AuthReducer from "../features/auth/AuthSlice";
 import CategoryReducer from "../features/category/categorySlice";
 import ProductsReducer from "../features/product/productSlice";
 import CartReducer from "../features/cart/cartSlice";
-import UserReducer from "../features/user/userSlice"
-import LocationReducer from "../features/location/locationSlice"
+import UserReducer from "../features/user/userSlice";
+import LocationReducer from "../features/location/locationSlice";
+import CheckoutReducer from "../features/checkout/checkoutSlice";
+import OrderReducer from "../features/order/orderSlice";
 
 const store = configureStore({
   reducer: {
@@ -15,7 +17,9 @@ const store = configureStore({
     products: ProductsReducer,
     cart: CartReducer,
     user: UserReducer,
-    location: LocationReducer
+    location: LocationReducer,
+    checkout: CheckoutReducer,
+    order: OrderReducer,
   },
 });
 

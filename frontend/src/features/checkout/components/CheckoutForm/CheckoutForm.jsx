@@ -1,19 +1,34 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import OrderSummary from "../../../cart/components/OrderSummary";
 import PaymentOptionsRadio from "./PaymentOptionsRadio";
 import InputField from "../../../../components/formFields/InputField";
 import AddressFields from "../../../user/components/AddressFields";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { setCheckoutInfo } from "../../checkoutSlice";
+import {
+  createPaymentOrder,
+  verifyPayment,
+} from "../../../payment/paymentThunks";
+import { selectCartTotalAmount } from "../../../cart/cartSlice";
+import useRazorPay from "../../../payment/hooks/useRazorPay";
+import { createOrder } from "../../../order/orderThunk";
 
 const CheckoutForm = () => {
   const { profile } = useSelector((state) => state.user);
+  const totalAmount = useSelector(selectCartTotalAmount);
+  const { payNow, isLoaded: isRazorpayLoaded } = useRazorPay();
+  const user = useSelector((state) => state.auth.user);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     fullname: "",
     phoneNumber: "",
     paymentMethod: "",
-    address: {
+    shippingAddress: {
       address: "",
       country: "",
       state: "",
@@ -28,7 +43,7 @@ const CheckoutForm = () => {
   };
 
   const getAddressChanges = (address) => {
-    setFormData((prev) => ({ ...prev, address }));
+    setFormData((prev) => ({ ...prev, shippingAddress: address }));
   };
 
   const handleRadioChange = (e) => {
@@ -38,10 +53,78 @@ const CheckoutForm = () => {
     }
   };
 
+  const paymentResponseHandler = async function (response) {
+    let toastId;
+    try {
+      // verify order
+      toastId = toast.loading("Verifying payment...");
+      const action = await dispatch(verifyPayment(response));
+
+      // console.log("verify action", action);
+      toast.dismiss(toastId);
+
+      if (action.error) return toast.error(action.payload);
+      if (!action.payload?.data) return;
+
+      if (!action.payload.data.paymentVerified)
+        return toast.error(
+          action.payload.message || "Payment verification failed"
+        );
+
+      toast.success(action.payload.message);
+
+      const orderData = {
+        ...formData,
+        paymentInfo: response,
+      };
+
+      // create new order
+      toastId = toast.loading("Creating Order...");
+      const orderAction = await dispatch(createOrder(orderData));
+      toast.dismiss(toastId);
+      if (orderAction.error) return toast.error(orderAction.payload);
+      if (!action.payload?.data) return;
+
+      toast.success(action.payload.message);
+
+      // navigate to order page
+      // console.log(orderAction);
+      navigate(`/orders`);
+    } catch (error) {
+      console.log(error);
+      toast.dismiss(toastId);
+      toast.error(error.message);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
+    const toastId = toast.loading("Loading...");
+    dispatch(setCheckoutInfo({ ...formData, totalAmount }));
+    dispatch(createPaymentOrder({ amount: totalAmount })).then((action) => {
+      toast.remove(toastId);
+      if (action.error) return toast.error(action.payload);
+      if (action.payload?.data) {
+        if (isRazorpayLoaded) {
+          payNow(
+            {
+              amount: totalAmount,
+              orderId: action.payload.data.id,
+              user: { ...user, contact: formData.phoneNumber },
+            },
+            paymentResponseHandler
+          );
+        } else {
+          toast.error("Failed to load Razorpay, Try later");
+        }
+      }
+    });
   };
+
+  useEffect(() => {
+    dispatch(setCheckoutInfo({ ...formData, totalAmount }));
+  }, [formData]);
 
   useEffect(() => {
     if (profile) {
@@ -50,7 +133,7 @@ const CheckoutForm = () => {
         const data = { ...prev };
         if (fullname) data.fullname = fullname;
         if (phoneNumber) data.phoneNumber = fullname;
-        if (address) data.address = address;
+        if (address) data.shippingAddress = address;
         return data;
       });
     }
@@ -89,7 +172,7 @@ const CheckoutForm = () => {
             </div>
             <AddressFields
               initialData={
-                profile?.address ? profile.address : formData.address
+                profile?.address ? profile.address : formData.shippingAddress
               }
               getChanges={getAddressChanges}
             />

@@ -18,6 +18,8 @@ import RequireAuth from "../features/auth/components/RequireAuth";
 import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
 import Profile from "../pages/Profile";
+import PaymentPage from "../pages/Payment";
+import Orders from "../pages/Orders";
 
 export default function AppRoutes() {
   return (
@@ -32,6 +34,8 @@ export default function AppRoutes() {
           <Route path="products/:id" element={<ProductInfo />} />
           <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="payment/:orderId" element={<PaymentPage />} />
+          <Route path="orders/" element={<Orders />} />
 
           {/** protected customerLayout routes */}
           <Route element={<RequireAuth />}>
